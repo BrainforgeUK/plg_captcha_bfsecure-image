@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" version="2.5.0" client="site" method="upgrade" group="captcha">
+  <name>Captcha - Secure Image</name>
+  <creationDate>30 April 2012</creationDate>
+  <author>Jonathan Brain</author>
+  <authorEmail>brainforge@btinternet.com</authorEmail>
+  <authorUrl>http://www.brainforge.co.uk</authorUrl>
+  <copyright>Copyright 2012 Jonathan Brain. All rights reserved.</copyright>
+  <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+  <version>3.1.1a</version>
+  <description>This CAPTCHA plugin uses Securimage.</description>
+
+	<files>
+		<filename plugin="bfsecurimage">bfsecurimage.php</filename>
+		<folder>includes</folder>
+		<filename>index.html</filename>
+    <filename>bfsecurimage.xml</filename>
+	</files>
+  
+	<languages>
+		<language tag="en-GB">en-GB.plg_captcha_bfsecurimage.ini</language>
+		<language tag="en-GB">en-GB.plg_captcha_bfsecurimage.sys.ini</language>
+	</languages>
+
+  <config>
+		<fields name="params">
+			<fieldset name="basic">
+  			<field name="responsefield"
+               type="text"
+               default="bfsecurimage_response_field"
+               size="40"
+               required="true"
+       				 label="PLG_BFSECURIMAGE_RESPONSEFIELD_LABEL"
+       				 description="PLG_BFSECURIMAGE_RESPONSEFIELD_DESC">
+  			</field>
+				<field name="audio"
+               type="radio"
+               default="0"
+               label="PLG_BFSECURIMAGE_SHOW_AUDIO_CHALLENGE_LABEL"
+               description="PLG_BFSECURIMAGE_SHOW_AUDIO_CHALLENGE_DESC">
+					<option value="0">JHIDE</option>
+					<option value="1">JSHOW</option>
+				</field>
+				<field name="refresh"
+               type="radio"
+               default="0"
+               label="PLG_BFSECURIMAGE_SHOW_NEW_CHALLENGE_LABEL"
+               description="PLG_BFSECURIMAGE_SHOW_NEW_CHALLENGE_DESC">
+					<option value="0">JHIDE</option>
+					<option value="1">JSHOW</option>
+				</field>
+			</fieldset>
+		</fields>
+	</config>
+</extension>

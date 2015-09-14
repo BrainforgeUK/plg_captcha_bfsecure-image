@@ -1144,15 +1144,20 @@ class Securimage {
 	{
 		// retrieve code from session, if no code exists check sqlite database if supported.
 		
-		// session code invalid or non-existant and code not found in sqlite db or sqlite is not available
-		$code = '';
 		if (isset($_SESSION['securimage_code_value']) && trim($_SESSION['securimage_code_value']) != '') {
 			if ($this->isCodeExpired($_SESSION['securimage_code_ctime']) == false) { 
 			  $code = $_SESSION['securimage_code_value'];
 			}
+      else {
+  			// Added 20141203 BRAINFORGE session code non-existant
+  			$code = '';
+      }
 		} else if ($this->use_sqlite_db == true && function_exists('sqlite_open')) { // no code in session - may mean user has cookies turned off
 			$this->openDatabase();
 			$code = $this->getCodeFromDatabase();
+		} else {
+			// session code invalid or non-existant and code not found in sqlite db or sqlite is not available
+			$code = '';
 		}
 		
 		$code               = trim(strtolower($code));
@@ -1377,7 +1382,7 @@ class Securimage {
 	 */
 	function getIPHash()
 	{
-		return strtolower(md5($_SERVER['REMOTE_ADDR']));
+		return strtolower(md5(FOFUtilsIp::getIp()));
 	}
 	
 	/**

@@ -45,7 +45,7 @@ $session   = JFactory::getSession();
 
 include 'securimage.php';
 
-$img = new securimage();
+$img = new Securimage();
 
 // Change some settings
 

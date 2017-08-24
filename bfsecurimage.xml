@@ -7,7 +7,7 @@
   <authorUrl>http://www.brainforge.co.uk</authorUrl>
   <copyright>Copyright 2012 Jonathan Brain. All rights reserved.</copyright>
   <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-  <version>3.1.1a</version>
+  <version>3.7a</version>
   <description>This CAPTCHA plugin uses Securimage.</description>
 
 	<files>

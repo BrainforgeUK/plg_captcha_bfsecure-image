@@ -12,12 +12,13 @@ jimport('joomla.plugin.plugin');
 
 class plgCaptchaBFSecurimage extends JPlugin{
   
-	function plgCaptchaBFSecurimage(&$subject, $config){
-		parent::__construct($subject, $config);
-		$this->loadLanguage();
-
-    $this->responseField = $this->params->get('responsefield', 'bfsecurimage_response_field');
-  }
+	/**
+	 * Load the language file on instantiation.
+	 *
+	 * @var    boolean
+	 * @since  3.1
+	 */
+  protected $autoloadLanguage = true;
 
 	/**
 	 * Initialise the captcha
@@ -27,6 +28,7 @@ class plgCaptchaBFSecurimage extends JPlugin{
 	 * @return	Boolean	True on success, false otherwise
 	 */
 	public function onInit($id) {
+    $this->responseField = $this->params->get('responsefield', 'bfsecurimage_response_field');
 	  return true;
   }
 
@@ -36,6 +38,11 @@ class plgCaptchaBFSecurimage extends JPlugin{
 	 * @return  string  The HTML to be embedded in the form.
 	 */
 	public function onDisplay($name, $id, $class) {
+    if (empty($this->responseField)) {
+  		JLog::add(JText::sprintf('JLIB_CAPTCHA_ERROR_PLUGIN_NOT_FOUND', $name), JLog::WARNING, 'jerror');
+      return '';
+    }
+  
 		$pluginPath = substr(__DIR__, strlen(JPATH_BASE));
 	  $pluginPath = JURI::base() . str_replace('\\', '/', $pluginPath) . '/includes';
     $imageAlt = JText::_('PLG_BFSECURIMAGE_THE_IMAGE');

@@ -28,7 +28,6 @@ class plgCaptchaBFSecurimage extends JPlugin{
 	 * @return	Boolean	True on success, false otherwise
 	 */
 	public function onInit($id) {
-    $this->responseField = $this->params->get('responsefield', 'bfsecurimage_response_field');
 	  return true;
   }
 
@@ -38,6 +37,7 @@ class plgCaptchaBFSecurimage extends JPlugin{
 	 * @return  string  The HTML to be embedded in the form.
 	 */
 	public function onDisplay($name, $id, $class) {
+    $this->responseField = $this->params->get('responsefield', 'bfsecurimage_response_field');
     if (empty($this->responseField)) {
   		JLog::add(JText::sprintf('JLIB_CAPTCHA_ERROR_PLUGIN_NOT_FOUND', $name), JLog::WARNING, 'jerror');
       return '';
@@ -85,6 +85,7 @@ class plgCaptchaBFSecurimage extends JPlugin{
 	  * @return  True if the answer is correct, false otherwise
 	  */
   function onCheckAnswer($code) {
+    $this->responseField = $this->params->get('responsefield', 'bfsecurimage_response_field');
     $solution = JRequest::getString($this->responseField);
     if (empty($solution)) {
  			$this->_subject->setError(JText::_('PLG_BFSECURIMAGE_ERROR_EMPTY_SOLUTION'));

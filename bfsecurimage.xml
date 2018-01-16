@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" version="2.5.0" client="site" method="upgrade" group="captcha">
-  <name>Captcha - Secure Image</name>
+  <name>Captcha - Secure Image by BrainforgeUK</name>
   <creationDate>30 April 2012</creationDate>
   <author>Jonathan Brain</author>
   <authorEmail>brainforge@btinternet.com</authorEmail>
@@ -54,6 +54,6 @@
 	</config>
 
   <updateservers>
-      <server type="extension" priority="1" name="Captcha - Secure Image">https://brainforge.co.uk/media/com_bfupdater/plg_bfsecurimage.xml</server>
+      <server type="extension" priority="1" name="Captcha - Secure Image by BrainforgeUK">https://brainforge.co.uk/media/com_bfupdater/plg_bfsecurimage.xml</server>
   </updateservers>
 </extension>

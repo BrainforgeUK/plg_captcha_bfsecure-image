@@ -7,7 +7,7 @@
   <authorUrl>http://www.brainforge.co.uk</authorUrl>
   <copyright>Copyright 2012-2018 Jonathan Brain. All rights reserved.</copyright>
   <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-  <version>4.0.0</version>
+  <version>4.0.1</version>
   <description>This CAPTCHA plugin uses Securimage.</description>
 
 	<files>
@@ -54,6 +54,8 @@
 	</config>
 
   <updateservers>
-      <server type="extension" priority="1" name="Captcha - Secure Image by BrainforgeUK">https://brainforge.co.uk/media/com_bfupdater/plg_captcha_bfsecurimage.xml</server>
+      <server type="extension" priority="1" name="Captcha - Secure Image by BrainforgeUK">
+				https://brainforge.co.uk/component/bfupdater?element=plg_captcha_bfsecurimage.xml
+			</server>
   </updateservers>
 </extension>

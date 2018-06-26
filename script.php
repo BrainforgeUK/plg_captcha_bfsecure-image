@@ -50,7 +50,6 @@ class plgCaptchaBFSecurimageInstallerScript
 	{
 		// Tidyup language files left over from earlier version
 		if (!is_dir(JPATH_SITE . '/plugins/captcha/plg_captcha_bfsecurimage/language')) {
-			@unlink(JPATH_SITE . '/language/en-GB/en-GB.plg_captcha_bfsecurimage.ini');
 			@unlink(JPATH_ADMINISTRATOR . '/language/en-GB/en-GB.plg_captcha_bfsecurimage.ini');
 			@unlink(JPATH_ADMINISTRATOR . '/language/en-GB/en-GB.plg_captcha_bfsecurimage.sys.ini');
 		}

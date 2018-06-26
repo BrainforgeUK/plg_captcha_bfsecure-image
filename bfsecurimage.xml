@@ -10,18 +10,16 @@
   <version>4.0.3</version>
   <description>This CAPTCHA plugin uses Securimage.</description>
 
+	<scriptfile>script.php</scriptfile>
+
 	<files>
 		<filename plugin="bfsecurimage">bfsecurimage.php</filename>
-		<folder>includes</folder>
 		<filename>index.html</filename>
     <filename>bfsecurimage.xml</filename>
+		<folder>language</folder>
+		<folder>includes</folder>
 	</files>
   
-	<languages>
-		<language tag="en-GB">en-GB.plg_captcha_bfsecurimage.ini</language>
-		<language tag="en-GB">en-GB.plg_captcha_bfsecurimage.sys.ini</language>
-	</languages>
-
   <config>
 		<fields name="params">
 			<fieldset name="basic">

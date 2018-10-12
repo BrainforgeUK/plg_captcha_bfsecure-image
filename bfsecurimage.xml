@@ -1,59 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" version="2.5.0" client="site" method="upgrade" group="captcha">
-  <name>Captcha - Secure Image by BrainforgeUK</name>
-  <creationDate>30 April 2012</creationDate>
-  <author>Jonathan Brain</author>
-  <authorEmail>brainforge@btinternet.com</authorEmail>
-  <authorUrl>http://www.brainforge.co.uk</authorUrl>
-  <copyright>Copyright 2012-2018 Jonathan Brain. All rights reserved.</copyright>
-  <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-  <version>4.0.3</version>
-  <description>This CAPTCHA plugin uses Securimage.</description>
+    <name>Captcha - Secure Image by Brainforge.UK</name>
+    <creationDate>30 April 2012</creationDate>
+    <author>Jonathan Brain</author>
+    <authorEmail>brainforge.uk@btinternet.com</authorEmail>
+    <authorUrl>http://www.brainforge.co.uk</authorUrl>
+    <copyright>Copyright 2012-2018 Jonathan Brain. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <version>4.1.0</version>
+    <description>This CAPTCHA plugin uses Securimage.</description>
 
-	<scriptfile>script.php</scriptfile>
+    <scriptfile>script.php</scriptfile>
 
-	<files>
-		<filename plugin="bfsecurimage">bfsecurimage.php</filename>
-		<filename>index.html</filename>
-    <filename>bfsecurimage.xml</filename>
-		<folder>language</folder>
-		<folder>includes</folder>
-	</files>
-  
-  <config>
-		<fields name="params">
-			<fieldset name="basic">
-  			<field name="responsefield"
-               type="text"
-               default="bfsecurimage_response_field"
-               size="40"
-               required="true"
-       				 label="PLG_BFSECURIMAGE_RESPONSEFIELD_LABEL"
-       				 description="PLG_BFSECURIMAGE_RESPONSEFIELD_DESC">
-  			</field>
-				<field name="audio"
-               type="radio"
-               default="0"
-               label="PLG_BFSECURIMAGE_SHOW_AUDIO_CHALLENGE_LABEL"
-               description="PLG_BFSECURIMAGE_SHOW_AUDIO_CHALLENGE_DESC">
-					<option value="0">JHIDE</option>
-					<option value="1">JSHOW</option>
-				</field>
-				<field name="refresh"
-               type="radio"
-               default="0"
-               label="PLG_BFSECURIMAGE_SHOW_NEW_CHALLENGE_LABEL"
-               description="PLG_BFSECURIMAGE_SHOW_NEW_CHALLENGE_DESC">
-					<option value="0">JHIDE</option>
-					<option value="1">JSHOW</option>
-				</field>
-			</fieldset>
-		</fields>
-	</config>
+    <files>
+        <filename plugin="bfsecurimage">bfsecurimage.php</filename>
+        <filename>index.html</filename>
+        <filename>bfsecurimage.xml</filename>
+        <filename>bfsecurimagehelper.php</filename>
+        <folder>language</folder>
+        <folder>includes</folder>
+    </files>
 
-  <updateservers>
-      <server type="extension" priority="1" name="Captcha - Secure Image by BrainforgeUK">
-				https://brainforge.co.uk/component/bfupdater?element=plg_captcha_bfsecurimage.xml
-			</server>
-  </updateservers>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="responsefield"
+                       type="text"
+                       default="PLG_BFSECURIMAGE_RESPONSEFIELD_DEFAULT"
+                       size="40"
+                       required="true"
+                       label="PLG_BFSECURIMAGE_RESPONSEFIELD_LABEL"
+                       description="PLG_BFSECURIMAGE_RESPONSEFIELD_DESC">
+                </field>
+                <field name="audio"
+                       type="radio"
+                       default="0"
+                       label="PLG_BFSECURIMAGE_SHOW_AUDIO_CHALLENGE_LABEL"
+                       description="PLG_BFSECURIMAGE_SHOW_AUDIO_CHALLENGE_DESC">
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+                <field name="refresh"
+                       type="radio"
+                       default="0"
+                       label="PLG_BFSECURIMAGE_SHOW_NEW_CHALLENGE_LABEL"
+                       description="PLG_BFSECURIMAGE_SHOW_NEW_CHALLENGE_DESC">
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+            </fieldset>
+
+            <fieldset name="css"
+                      label="PLG_BFSECURIMAGE_CSS_FIELDSET">
+
+                <field
+                        name="cssnote" type="note"
+                        description="PLG_BFSECURIMAGE_CSS_FIELDSET_DESC"/>
+
+                <field
+                        name="cssmode" type="radio" class="btn-group"
+                        label="PLG_BFSECURIMAGE_CSSMODE_LABEL" default="1">
+                    <option value="0">JOFF</option>
+                    <option value="1">JON</option>
+                </field>
+
+                <field
+                        name="customcss" type="textarea"
+                        label="PLG_BFSECURIMAGE_CSSCUSTOM_LABEL"
+                        showon="cssmode:1"
+                        filter="raw"
+                        rows="10"
+                        cols="20"
+                        default="#captcha_image_audio_controls { display: inline; padding: 0 20%; }">
+                </field>
+            </fieldset>
+        </fields>
+    </config>
+
+    <updateservers>
+        <server type="extension" priority="1" name="Captcha - Secure Image by Brainforge.UK">
+            https://brainforge.co.uk/component/bfupdater?element=plg_captcha_bfsecurimage.xml
+        </server>
+    </updateservers>
 </extension>

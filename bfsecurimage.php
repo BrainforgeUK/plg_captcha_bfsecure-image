@@ -1,106 +1,102 @@
 <?php
 /**
- * @package		Joomla.Site
- * @subpackage	plg_secureimage
- * @copyright	Copyright (C) 2012 Jonathan Brain. All rights reserved.
- * @license		GNU General Public License version 2 or later; see LICENSE.txt
+ * @package        Joomla.Site
+ * @subpackage    plg_bfsecureimage
+ * @copyright    Copyright (C) 2012 Jonathan Brain. All rights reserved.
+ * @license        GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // no direct access
 defined('_JEXEC') or die;
 jimport('joomla.plugin.plugin');
 
-class plgCaptchaBFSecurimage extends JPlugin{
-  
+class plgCaptchaBFSecurimage extends JPlugin
+{
 	/**
 	 * Load the language file on instantiation.
 	 *
 	 * @var    boolean
 	 * @since  3.1
 	 */
-  protected $autoloadLanguage = true;
+	protected $autoloadLanguage = true;
 
 	/**
 	 * Initialise the captcha
 	 *
-	 * @param	string	$id	The id of the field.
+	 * @param    string $id The id of the field.
 	 *
-	 * @return	Boolean	True on success, false otherwise
+	 * @return    Boolean    True on success, false otherwise
 	 */
-	public function onInit($id) {
-	  return true;
-  }
+	public function onInit($id)
+	{
+		return true;
+	}
 
 	/**
 	 * Gets the challenge HTML
 	 *
 	 * @return  string  The HTML to be embedded in the form.
 	 */
-	public function onDisplay($name, $id, $class) {
-    $this->responseField = $this->params->get('responsefield', 'bfsecurimage_response_field');
-    if (empty($this->responseField)) {
-  		JLog::add(JText::sprintf('JLIB_CAPTCHA_ERROR_PLUGIN_NOT_FOUND', $name), JLog::WARNING, 'jerror');
-      return '';
-    }
-  
-		$pluginPath = substr(__DIR__, strlen(JPATH_BASE));
-	  $pluginPath = JURI::base() . str_replace('\\', '/', $pluginPath) . '/includes';
-    $imageAlt = JText::_('PLG_BFSECURIMAGE_THE_IMAGE');
-    $image = '<img id="' . $id . '" ' .
-                  'src="' . $pluginPath . '/securimage_show.php" ' .
-                  'alt="' . $imageAlt . '" title="' . $imageAlt . '" />';
-    if ($this->params->get('audio')) {
-      $audio = '<object title="' . JText::_('PLG_BFSECURIMAGE_AUDIO_CHALLENGE') . '" ' .
-                       'width="22" height="24" tabindex="1" ' .
-                       'data="' . $pluginPath . '/securimage_play.swf?audio=' . $pluginPath . '/securimage_play.php&amp;bgColor1=#fff&amp;bgColor2=#fff&amp;iconColor=#777&amp;borderWidth=1&amp;borderColor=#999999" type="application/x-shockwave-flash"><param value="' . $pluginPath . '/securimage_play.swf?audio=' . $pluginPath . '/securimage_play.php&amp;bgColor1=#fff&amp;bgColor2=#fff&amp;iconColor=#777&amp;borderWidth=1&amp;borderColor=#000" name="movie"></object>';
-    }
-    else $audio = null;
-    if ($this->params->get('refresh')) {
-      $newChallenge = JText::_('PLG_BFSECURIMAGE_NEW_CHALLENGE');
-      $refresh = '<a title="' . $newChallenge . '" ' .
-                    'style="vertical-align: middle;" ' .
-                    'onclick="document.getElementById(\'' . $id . '\').src = \'' . $pluginPath . '/securimage_show.php?sid=\' + Math.random(); return false" ' .
-                    'href="#">' .
-                 '<img border="0" align="bottom" onclick="this.blur()" alt="' . $newChallenge . '" src="' . $pluginPath . '/images/refresh.gif" /></a>';
-    }
-    else $refresh = null;
+	public function onDisplay($name, $id, $class)
+	{
+		$this->responseField = $this->params->get('responsefield', 'bfsecurimage_response_field');
+		if (empty($this->responseField))
+		{
+			JLog::add(JText::sprintf('JLIB_CAPTCHA_ERROR_PLUGIN_NOT_FOUND', $name), JLog::WARNING, 'jerror');
+			return '';
+		}
 
-    return '<table class="' . trim('bfsecurimage ' . $class) . '">' .
-           '<tr class="bfsi_challenge">' .
-           '<td class="bfsi_challenge">' . $image . '</td>' .
-           '<td class="bfsi_extras">' . $audio . '<br /><br />' . $refresh . '</td>' . 
-           '</tr>' .
-           '<tr class="bfsi_response">' .
-           '<td class="bfsi_response" colspan="2">' .
-           '<input class="required" autocomplete="off" title="' . JText::_('PLG_BFSECURIMAGE_VERIFY_CHALLENGE') . '" type="text" ' .
-                  'name="' . $this->responseField . '" id="' . $this->responseField . '" size="10" maxlength="6" />' .
-           '</td>' .
-           '</tr>' .
-           '</table>';
+		$doc = JFactory::getDocument();
+		if($this->params->get('cssmode', 1))
+		{
+			$css = trim($this->params->get('customcss', JText::_('PLG_BFSECURIMAGE_CSSCUSTOM_DEFAULT')));
+			if (!empty($css))
+			{
+				$doc->addStyleDeclaration($css);
+			}
+		}
+
+		$options = array();
+		$options['show_audio_button'] = $this->params->get('audio');
+		$options['show_refresh_button'] = $this->params->get('refresh');
+		$options['image_alt_text'] = JText::_('PLG_BFSECURIMAGE_THE_IMAGE');
+		$options['audio_title_text'] = JText::_('PLG_BFSECURIMAGE_AUDIO_CHALLENGE');
+		$options['refresh_alt_text'] = JText::_('PLG_BFSECURIMAGE_NEW_CHALLENGE');
+		$options['refresh_title_text'] = $options['refresh_alt_text'];
+		$options['input_text'] = JText::_('PLG_BFSECURIMAGE_VERIFY_CHALLENGE');
+		$options['input_id'] = JText::_('PLG_BFSECURIMAGE_RESPONSEFIELD_DEFAULT');
+
+		require_once __DIR__ . '/bfsecurimagehelper.php';
+		$securImage = plgCaptchaBFSecurimageHelper::getSecureimageInstance();
+		return $securImage->getCaptchaHtml($options);
 	}
 
 	/**
-	  * Verifies if the user's guess was correct
-	  *
-	  * @return  True if the answer is correct, false otherwise
-	  */
-  function onCheckAnswer($code) {
-    $this->responseField = $this->params->get('responsefield', 'bfsecurimage_response_field');
-    $solution = JRequest::getString($this->responseField);
-    if (empty($solution)) {
- 			$this->_subject->setError(JText::_('PLG_BFSECURIMAGE_ERROR_EMPTY_SOLUTION'));
-      return false;
-    }
-    
-    require_once __DIR__.'/includes/securimage.php';
-    $bfsecurimage = new Securimage();
-    $result = $bfsecurimage->check($solution);
-    if (!$result) {
- 			$this->_subject->setError(JText::_('PLG_BFSECURIMAGE_ERROR_INCORRECT_CAPTCHA_SOL'));
-      return false;
-    }
+	 * Verifies if the user's guess was correct
+	 *
+	 * @return  True if the answer is correct, false otherwise
+	 */
+	function onCheckAnswer($code)
+	{
+		$this->responseField = $this->params->get('responsefield', JText::_('PLG_BFSECURIMAGE_RESPONSEFIELD_DEFAULT'));
+		$solution = JRequest::getString($this->responseField);
+		if (empty($solution))
+		{
+			$this->_subject->setError(JText::_('PLG_BFSECURIMAGE_ERROR_EMPTY_SOLUTION'));
+			return false;
+		}
 
-    return $result;
-  }
+		require_once __DIR__ . '/bfsecurimagehelper.php';
+		$securImage = plgCaptchaBFSecurimageHelper::getSecureimageInstance();
+		$result = $securImage->check($solution);
+		if (!$result)
+		{
+			$this->_subject->setError(JText::_('PLG_BFSECURIMAGE_ERROR_INCORRECT_CAPTCHA_SOL'));
+			return false;
+		}
+
+		return $result;
+	}
 }
+
 ?>

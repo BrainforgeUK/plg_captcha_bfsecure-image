@@ -1340,7 +1340,14 @@ class Securimage
      */
     public static function getCaptchaHtml($options = array(), $parts = Securimage::HTML_ALL)
     {
-        static $javascript_init = false;
+		jimport('joomla.environment.browser');
+		$browser = JBrowser::getInstance();
+		if (!empty($browser) && $browser->isRobot())
+		{
+			return 'Captcha not accessible to robot.';
+		}
+
+		static $javascript_init = false;
 
         if (!isset($options['securimage_path'])) {
             $docroot = (isset($_SERVER['DOCUMENT_ROOT'])) ? $_SERVER['DOCUMENT_ROOT'] : substr($_SERVER['SCRIPT_FILENAME'], 0, -strlen($_SERVER['SCRIPT_NAME']));

@@ -23,7 +23,7 @@ class plgCaptchaBFSecurimage extends JPlugin
 	/**
 	 * Initialise the captcha
 	 *
-	 * @param    string $id The id of the field.
+	 * @param string $id The id of the field.
 	 *
 	 * @return    Boolean    True on success, false otherwise
 	 */
@@ -47,7 +47,7 @@ class plgCaptchaBFSecurimage extends JPlugin
 		}
 
 		$doc = JFactory::getDocument();
-		if($this->params->get('cssmode', 1))
+		if ($this->params->get('cssmode', 1))
 		{
 			$css = trim($this->params->get('customcss', JText::_('PLG_BFSECURIMAGE_CSSCUSTOM_DEFAULT')));
 			if (!empty($css))

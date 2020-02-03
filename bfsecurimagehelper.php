@@ -11,7 +11,7 @@ class plgCaptchaBFSecurimageHelper
 	public static function getSecureimageInstance()
 	{
 		require_once __DIR__ . '/includes/securimage.php';
-		return new Securimage(array('use_database'=>true, 'no_session'=>true));
+		return new Securimage(array('use_database' => true, 'no_session' => true));
 	}
 }
 

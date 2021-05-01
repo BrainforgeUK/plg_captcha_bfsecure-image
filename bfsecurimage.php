@@ -1,16 +1,20 @@
 <?php
 /**
- * @package        Joomla.Site
- * @subpackage    plg_bfsecureimage
- * @copyright    Copyright (C) 2012 Jonathan Brain. All rights reserved.
- * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ * @package      Joomla.Site
+ * @subpackage   plg_bfsecureimage
+ * @copyright    Copyright (C) 2012-2021 Jonathan Brain. All rights reserved.
+ * @license      GNU General Public License version 2 or later; see LICENSE.txt
  */
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\Plugin\CMSPlugin;
 
 // no direct access
 defined('_JEXEC') or die;
-jimport('joomla.plugin.plugin');
 
-class plgCaptchaBFSecurimage extends JPlugin
+class plgCaptchaBFSecurimage extends CMSPlugin
 {
 	/**
 	 * Load the language file on instantiation.
@@ -19,6 +23,7 @@ class plgCaptchaBFSecurimage extends JPlugin
 	 * @since  3.1
 	 */
 	protected $autoloadLanguage = true;
+	protected $_subject;
 
 	/**
 	 * Initialise the captcha
@@ -42,14 +47,14 @@ class plgCaptchaBFSecurimage extends JPlugin
 		$this->responseField = $this->params->get('responsefield', 'bfsecurimage_response_field');
 		if (empty($this->responseField))
 		{
-			JLog::add(JText::sprintf('JLIB_CAPTCHA_ERROR_PLUGIN_NOT_FOUND', $name), JLog::WARNING, 'jerror');
+			Log::add(Text::sprintf('JLIB_CAPTCHA_ERROR_PLUGIN_NOT_FOUND', $name), JLog::WARNING, 'jerror');
 			return '';
 		}
 
-		$doc = JFactory::getDocument();
+		$doc = Factory::getApplication()->getDocument();
 		if ($this->params->get('cssmode', 1))
 		{
-			$css = trim($this->params->get('customcss', JText::_('PLG_BFSECURIMAGE_CSSCUSTOM_DEFAULT')));
+			$css = trim($this->params->get('customcss', Text::_('PLG_BFSECURIMAGE_CSSCUSTOM_DEFAULT')));
 			if (!empty($css))
 			{
 				$doc->addStyleDeclaration($css);
@@ -59,12 +64,12 @@ class plgCaptchaBFSecurimage extends JPlugin
 		$options = array();
 		$options['show_audio_button'] = $this->params->get('audio');
 		$options['show_refresh_button'] = $this->params->get('refresh');
-		$options['image_alt_text'] = JText::_('PLG_BFSECURIMAGE_THE_IMAGE');
-		$options['audio_title_text'] = JText::_('PLG_BFSECURIMAGE_AUDIO_CHALLENGE');
-		$options['refresh_alt_text'] = JText::_('PLG_BFSECURIMAGE_NEW_CHALLENGE');
+		$options['image_alt_text'] = Text::_('PLG_BFSECURIMAGE_THE_IMAGE');
+		$options['audio_title_text'] = Text::_('PLG_BFSECURIMAGE_AUDIO_CHALLENGE');
+		$options['refresh_alt_text'] = Text::_('PLG_BFSECURIMAGE_NEW_CHALLENGE');
 		$options['refresh_title_text'] = $options['refresh_alt_text'];
-		$options['input_text'] = JText::_('PLG_BFSECURIMAGE_VERIFY_CHALLENGE');
-		$options['input_id'] = JText::_('PLG_BFSECURIMAGE_RESPONSEFIELD_DEFAULT');
+		$options['input_text'] = Text::_('PLG_BFSECURIMAGE_VERIFY_CHALLENGE');
+		$options['input_id'] = 'bfsecurimage_response_field';
 
 		require_once __DIR__ . '/bfsecurimagehelper.php';
 		$securImage = plgCaptchaBFSecurimageHelper::getSecureimageInstance();
@@ -74,16 +79,14 @@ class plgCaptchaBFSecurimage extends JPlugin
 	/**
 	 * Verifies if the user's guess was correct
 	 *
-	 * @return  True if the answer is correct, false otherwise
+	 * @return  boolean True if the answer is correct, false otherwise
 	 */
 	function onCheckAnswer($code)
 	{
-		$this->responseField = $this->params->get('responsefield', JText::_('PLG_BFSECURIMAGE_RESPONSEFIELD_DEFAULT'));
-		$solution = JRequest::getString($this->responseField);
+		$solution = Factory::getApplication()->input->getString('bfsecurimage_response_field');
 		if (empty($solution))
 		{
-			$this->_subject->setError(JText::_('PLG_BFSECURIMAGE_ERROR_EMPTY_SOLUTION'));
-			return false;
+			throw new \RuntimeException(Text::_('PLG_BFSECURIMAGE_ERROR_EMPTY_SOLUTION'), 500);
 		}
 
 		require_once __DIR__ . '/bfsecurimagehelper.php';
@@ -91,8 +94,7 @@ class plgCaptchaBFSecurimage extends JPlugin
 		$result = $securImage->check($solution);
 		if (!$result)
 		{
-			$this->_subject->setError(JText::_('PLG_BFSECURIMAGE_ERROR_INCORRECT_CAPTCHA_SOL'));
-			return false;
+			throw new \RuntimeException(Text::_('PLG_BFSECURIMAGE_ERROR_INCORRECT_CAPTCHA_SOL'), 500);
 		}
 
 		return $result;

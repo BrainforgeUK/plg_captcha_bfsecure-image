@@ -7,7 +7,7 @@
     <authorUrl>http://www.brainforge.co.uk</authorUrl>
     <copyright>Copyright 2012-2021 Jonathan Brain. All rights reserved.</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-    <version>4.2.0</version>
+    <version>5.0.0</version>
     <description>This CAPTCHA plugin uses Securimage.</description>
 
     <scriptfile>script.php</scriptfile>
@@ -23,25 +23,21 @@
     <config>
         <fields name="params">
             <fieldset name="basic">
-                <field name="responsefield"
-                       type="text"
-                       size="40"
-                       required="true"
-                       label="PLG_BFSECURIMAGE_RESPONSEFIELD_LABEL"
-                       description="PLG_BFSECURIMAGE_RESPONSEFIELD_DESC"
-                       translate_default="true"
-                       default="PLG_BFSECURIMAGE_RESPONSEFIELD_DEFAULT">
-                </field>
                 <field name="audio"
                        type="radio"
+                       class="btn-group"
+                       layout="joomla.form.field.radio.switcher"
                        default="0"
                        label="PLG_BFSECURIMAGE_SHOW_AUDIO_CHALLENGE_LABEL"
                        description="PLG_BFSECURIMAGE_SHOW_AUDIO_CHALLENGE_DESC">
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
                 </field>
+
                 <field name="refresh"
                        type="radio"
+                       class="btn-group"
+                       layout="joomla.form.field.radio.switcher"
                        default="0"
                        label="PLG_BFSECURIMAGE_SHOW_NEW_CHALLENGE_LABEL"
                        description="PLG_BFSECURIMAGE_SHOW_NEW_CHALLENGE_DESC">
@@ -52,14 +48,15 @@
 
             <fieldset name="css"
                       label="PLG_BFSECURIMAGE_CSS_FIELDSET">
-
                 <field
-                        name="cssnote" type="note"
-                        description="PLG_BFSECURIMAGE_CSS_FIELDSET_DESC"/>
-
-                <field
-                        name="cssmode" type="radio" class="btn-group"
-                        label="PLG_BFSECURIMAGE_CSSMODE_LABEL" default="1">
+                        name="cssmode"
+                        type="radio"
+                        class="btn-group"
+                        layout="joomla.form.field.radio.switcher"
+                        label="PLG_BFSECURIMAGE_CSSMODE_LABEL"
+                        description="PLG_BFSECURIMAGE_CSS_FIELDSET_DESC"
+                        default="1"
+                >
                     <option value="0">JOFF</option>
                     <option value="1">JON</option>
                 </field>
@@ -72,8 +69,9 @@
                         filter="raw"
                         rows="10"
                         cols="20"
-                        translate_default="true"
-                        default="PLG_BFSECURIMAGE_CSSCUSTOM_DEFAULT">
+                        default="#captcha_image_audio_controls { display: inline; padding: 0 20%; }"
+                        hint="#captcha_image_audio_controls { display: inline; padding: 0 20%; }"
+                >
                 </field>
             </fieldset>
         </fields>

@@ -61,7 +61,7 @@ $options = array(
 $img = new Securimage();
 */
 
-require_once dirname(__DIR__) . '/src/helper/BfsecurimageHelper.php';
+require_once dirname(__DIR__) . '/src/Helper/BfsecurimageHelper.php';
 
 use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageHelper;
 

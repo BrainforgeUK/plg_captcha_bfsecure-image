@@ -48,7 +48,7 @@ $options = array(
 $img = new Securimage(array('use_database'=>true, 'no_session'=>true));
 */
 
-require_once dirname(__DIR__) . '/src/helper/BfsecurimageHelper.php';
+require_once dirname(__DIR__) . '/src/Helper/BfsecurimageHelper.php';
 
 use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageHelper;
 

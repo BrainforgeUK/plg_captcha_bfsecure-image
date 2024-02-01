@@ -1,8 +1,8 @@
 <?php
 /**
- * @package		Joomla.Site
+ * @package		This CAPTCHA plugin uses Securimage.
  * @subpackage	plg_secureimage
- * @copyright	Copyright (C) 2018 Jonathan Brain. All rights reserved.
+ * @copyright	Copyright (C) 2018-2024 Jonathan Brain. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 

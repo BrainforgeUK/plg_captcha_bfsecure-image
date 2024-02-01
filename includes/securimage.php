@@ -212,6 +212,8 @@
 
  */
 
+use Joomla\CMS\Environment\Browser;
+
 
 /**
  * Securimage CAPTCHA Class.
@@ -1341,7 +1343,7 @@ class Securimage
     public static function getCaptchaHtml($options = array(), $parts = Securimage::HTML_ALL)
     {
 		jimport('joomla.environment.browser');
-		$browser = JBrowser::getInstance();
+		$browser = Browser::getInstance();
 		if (!empty($browser) && $browser->isRobot())
 		{
 			return 'Captcha not accessible to robot.';

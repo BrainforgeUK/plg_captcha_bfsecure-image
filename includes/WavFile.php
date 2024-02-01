@@ -1566,7 +1566,8 @@ class WavFile
         } else {
             // replace
             for ($i = 0; $i < $sampleBytes; ++$i) {
-                $this->_samples{$offset + $i} = $sampleBinary{$i};
+				// 2024 Brainforge.UK - Modified for Joomla 8.1 compatibility
+                $this->_samples[$offset + $i] = $sampleBinary[$i];
             }
         }
 

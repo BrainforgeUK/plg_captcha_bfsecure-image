@@ -1,27 +1,27 @@
 <?php
 
 /**
- * Project:     Securimage: A PHP class for creating and managing form CAPTCHA images<br />
- * File:        securimage_play.php<br />
+ * Project:     Securimage: A PHP class for creating and managing form CAPTCHA images
+ * File:        securimage_play.php
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.<br /><br />
+ * version 2.1 of the License, or any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.<br /><br />
+ * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA<br /><br />
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Any modifications to the library should be indicated clearly in the source code
- * to inform users that the changes are not a part of the original software.<br /><br />
+ * to inform users that the changes are not a part of the original software.
  *
- * If you found this script useful, please take a quick moment to rate it.<br />
+ * If you found this script useful, please take a quick moment to rate it.
  * http://www.hotscripts.com/rate/49400.html  Thanks.
  *
  * @link http://www.phpcaptcha.org Securimage PHP CAPTCHA
@@ -34,8 +34,7 @@
  *
  */
 
-/* Brainforge.UK : Now uses plgCaptchaBFSecurimageHelper
-require_once dirname(__FILE__) . '/securimage.php';
+/* Brainforge.UK : Now uses BfsecurimageHelper
 
 // if using database, adjust these options as necessary and change $img = new Securimage(); to $img = new Securimage($options);
 // see test.mysql.php or test.sqlite.php for examples
@@ -49,8 +48,11 @@ $options = array(
 $img = new Securimage(array('use_database'=>true, 'no_session'=>true));
 */
 
-require_once dirname(__DIR__) . '/bfsecurimagehelper.php';
-$img = plgCaptchaBFSecurimageHelper::getSecureimageInstance();
+require_once dirname(__DIR__) . '/src/helper/BfsecurimageHelper.php';
+
+use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageHelper;
+
+$img = BfsecurimageHelper::getSecureimageInstance();
 
 // Other audio settings
 //$img->audio_use_sox   = true;

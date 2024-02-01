@@ -47,8 +47,7 @@
 // Remove the "//" from the following line for debugging problems
 // error_reporting(E_ALL); ini_set('display_errors', 1);
 
-/* Brainforge.UK : Now uses plgCaptchaBFSecurimageHelper
-require_once dirname(__FILE__) . '/securimage.php';
+/* Brainforge.UK : Now uses BfsecurimageHelper
 
 // if using database, adjust these options as necessary and change $img = new Securimage(); to $img = new Securimage($options);
 // see test.mysql.php or test.sqlite.php for examples
@@ -62,8 +61,11 @@ $options = array(
 $img = new Securimage();
 */
 
-require_once dirname(__DIR__) . '/bfsecurimagehelper.php';
-$img = plgCaptchaBFSecurimageHelper::getSecureimageInstance();
+require_once dirname(__DIR__) . '/src/helper/BfsecurimageHelper.php';
+
+use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageHelper;
+
+$img = BfsecurimageHelper::getSecureimageInstance();
 
 // You can customize the image by making changes below, some examples are included - remove the "//" to uncomment
 

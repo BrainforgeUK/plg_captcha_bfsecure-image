@@ -89,7 +89,7 @@ class Bfsecurimage extends CMSPlugin implements SubscriberInterface
 	 *
 	 * @return  True | false if the answer is correct, false otherwise
 	 */
-	function onCheckAnswer($code)
+	public function onCheckAnswer($code)
 	{
 		$this->responseField = Text::_($this->params->get('responsefield'));
 		$solution = $this->app->getInput()->request->get($this->responseField, '', 'string');
@@ -100,11 +100,6 @@ class Bfsecurimage extends CMSPlugin implements SubscriberInterface
 
 		$securImage = BfsecurimageHelper::getSecureimageInstance();
 		$result = $securImage->check($solution);
-		if (!$result)
-		{
-			return false;
-		}
-
-		return $result;
+		return !$result ? false : $result;
 	}
 }

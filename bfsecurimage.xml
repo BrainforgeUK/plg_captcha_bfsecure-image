@@ -7,7 +7,7 @@
     <authorUrl>http://www.brainforge.co.uk</authorUrl>
     <copyright>Copyright 2012-2024 Jonathan Brain. All rights reserved.</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-    <version>4.3.0</version>
+    <version>5.0.1</version>
     <description>PLG_CAPTCHA_BFSECURIMAGE_XML_DESCRIPTION</description>
 
     <namespace path="src">Brainforgeuk\Plugin\Captcha\Bfsecurimage</namespace>

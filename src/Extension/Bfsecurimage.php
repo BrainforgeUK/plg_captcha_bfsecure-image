@@ -43,9 +43,9 @@ class Bfsecurimage extends CMSPlugin implements SubscriberInterface
 	 * @return    Boolean    True on success, false otherwise
 	 */
 	public function onInit($id)
-{
-	return true;
-}
+	{
+		return true;
+	}
 
 	/**
 	 * Gets the challenge HTML
@@ -53,36 +53,38 @@ class Bfsecurimage extends CMSPlugin implements SubscriberInterface
 	 * @return  string  The HTML to be embedded in the form.
 	 */
 	public function onDisplay($name, $id, $class)
-{
-	$this->responseField = $this->params->get('responsefield', 'bfsecurimage_response_field');
-	if (empty($this->responseField))
 	{
-		Log::add(Text::sprintf('JLIB_CAPTCHA_ERROR_PLUGIN_NOT_FOUND', $name), Log::WARNING, 'jerror');
-		return '';
-	}
+		if (empty($this->params)) return '';
 
-	if ($this->params->get('cssmode', 1))
-	{
-		$css = trim(Text::_($this->params->get('customcss', 'PLG_BFSECURIMAGE_CSSCUSTOM_DEFAULT')));
-		if (!empty($css))
+		$this->responseField = $this->params->get('responsefield', 'bfsecurimage_response_field');
+		if (empty($this->responseField))
 		{
-			$this->app->getDocument()->addStyleDeclaration($css);
+			Log::add(Text::sprintf('JLIB_CAPTCHA_ERROR_PLUGIN_NOT_FOUND', $name), Log::WARNING, 'jerror');
+			return '';
 		}
+
+		if ($this->params->get('cssmode', 1))
+		{
+			$css = trim(Text::_($this->params->get('customcss', 'PLG_BFSECURIMAGE_CSSCUSTOM_DEFAULT')));
+			if (!empty($css))
+			{
+				$this->app->getDocument()->addStyleDeclaration($css);
+			}
+		}
+
+		$options = array();
+		$options['show_audio_button'] = $this->params->get('audio');
+		$options['show_refresh_button'] = $this->params->get('refresh');
+		$options['image_alt_text'] = Text::_('PLG_BFSECURIMAGE_THE_IMAGE');
+		$options['audio_title_text'] = Text::_('PLG_BFSECURIMAGE_AUDIO_CHALLENGE');
+		$options['refresh_alt_text'] = Text::_('PLG_BFSECURIMAGE_NEW_CHALLENGE');
+		$options['refresh_title_text'] = $options['refresh_alt_text'];
+		$options['input_text'] = Text::_('PLG_BFSECURIMAGE_VERIFY_CHALLENGE');
+		$options['input_id'] = Text::_('PLG_BFSECURIMAGE_RESPONSEFIELD_DEFAULT');
+
+		$securImage = BfsecurimageHelper::getSecureimageInstance();
+		return $securImage->getCaptchaHtml($options);
 	}
-
-	$options = array();
-	$options['show_audio_button'] = $this->params->get('audio');
-	$options['show_refresh_button'] = $this->params->get('refresh');
-	$options['image_alt_text'] = Text::_('PLG_BFSECURIMAGE_THE_IMAGE');
-	$options['audio_title_text'] = Text::_('PLG_BFSECURIMAGE_AUDIO_CHALLENGE');
-	$options['refresh_alt_text'] = Text::_('PLG_BFSECURIMAGE_NEW_CHALLENGE');
-	$options['refresh_title_text'] = $options['refresh_alt_text'];
-	$options['input_text'] = Text::_('PLG_BFSECURIMAGE_VERIFY_CHALLENGE');
-	$options['input_id'] = Text::_('PLG_BFSECURIMAGE_RESPONSEFIELD_DEFAULT');
-
-	$securImage = BfsecurimageHelper::getSecureimageInstance();
-	return $securImage->getCaptchaHtml($options);
-}
 
 	/**
 	 * Verifies if the user's guess was correct

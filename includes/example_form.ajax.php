@@ -1,4 +1,11 @@
 <?php
+/**
+ * @package   CAPTCHA plugin uses Securimage
+ * @license   See file includes/LICENSE.txt
+ */
+
+\defined('_JEXEC') or die;
+
 session_start(); // this MUST be called prior to any output including whitespaces and line breaks!
 
 $GLOBALS['ct_recipient']   = 'YOU@EXAMPLE.COM'; // Change to your email address!

@@ -8,8 +8,7 @@
 
 namespace Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper;
 
-// Sometimes used outside of Joomla (see securimage_show.php amd securimage_play.php).
-// \defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
 /*
  */

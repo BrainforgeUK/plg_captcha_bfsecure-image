@@ -1,4 +1,12 @@
 <?php
+/**
+ * @package   CAPTCHA plugin uses Securimage
+ * @license   See file includes/LICENSE.txt
+ */
+
+!\defined('_JEXEC') or die;
+
+define('_JEXEC', 1);
 
 /**
  * Project:     Securimage: A PHP class for creating and managing form CAPTCHA images

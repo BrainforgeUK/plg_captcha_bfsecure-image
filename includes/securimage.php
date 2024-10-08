@@ -1553,7 +1553,10 @@ class Securimage
             $input_attrs['id']   = $input_id;
             $input_attrs['autocomplete'] = 'off';
 
-            foreach($input_attrs as $name => $val) {
+			// Brainforge.UK : Added
+			$input_attrs['required'] = 'required';
+
+			foreach($input_attrs as $name => $val) {
                 $input_attr .= sprintf('%s="%s" ', $name, htmlspecialchars($val));
             }
 

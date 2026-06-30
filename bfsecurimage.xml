@@ -4,10 +4,10 @@
     <creationDate>30 April 2012</creationDate>
     <author>Jonathan Brain</author>
     <authorEmail>brainforge.uk@btinternet.com</authorEmail>
-    <authorUrl>http://www.brainforge.co.uk</authorUrl>
-    <copyright>Copyright 2012-2024 Jonathan Brain. All rights reserved.</copyright>
+    <authorUrl>https://www.brainforge.co.uk</authorUrl>
+    <copyright>Copyright 2012-2026 Jonathan Brain. All rights reserved.</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-    <version>5.1.0</version>
+    <version>6.0.0</version>
     <description>PLG_CAPTCHA_BFSECURIMAGE_XML_DESCRIPTION</description>
 
     <namespace path="src">Brainforgeuk\Plugin\Captcha\Bfsecurimage</namespace>

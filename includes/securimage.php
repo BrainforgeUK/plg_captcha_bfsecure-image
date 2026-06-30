@@ -53,6 +53,10 @@
 /**
 
  ChangeLog
+
+ June 2026
+ Modified by https://brainforge.co.uk for use with PHP 8.4 and Joomla 6.
+
  3.6.7
  - Merge changes from 4.0.1-nextgen
  - Increase captcha difficulty
@@ -1016,7 +1020,9 @@ class Securimage
      *
      * @var int
      */
-    protected $gdsignaturecolor;
+	protected $gdsignaturecolor;
+
+	protected $gdnoisecolor;
 
     /**
      * Create a new securimage object, pass options to set in the constructor.
@@ -1400,6 +1406,7 @@ class Securimage
         if (!is_array($image_attrs)) $image_attrs = array();
         if (!isset($image_attrs['style'])) $image_attrs['style'] = 'float: left; padding-right: 5px';
         $image_attrs['id']  = $image_id;
+		$image_attrs['class']  = 'bf' . $image_id;
 
         $show_path = $securimage_path . '/securimage_show.php?';
         if ($show_image_url) {
@@ -1495,14 +1502,35 @@ class Securimage
             $html .= "</audio>\n</div>\n";
 
             // html5 audio controls
-            $html .= sprintf('<div id="%s_audio_controls">', $image_id) . "\n" .
-                     sprintf('<a title="%s" tabindex="-1" class="captcha_play_button" href="%sid=%s" onclick="return false">',
+			$html .= sprintf('<div id="%s_audio_controls">', $image_id) . "\n";
+			$html .= sprintf('<div id="%s_audio_controls_wrap">', $image_id) . "\n";
+			$html .= sprintf('<a title="%s" tabindex="-1" class="captcha_play_button" href="%sid=%s" onclick="return false">',
 						 $audio_title, $play_path, uniqid()
                      ) . "\n" .
                      sprintf('<img class="captcha_play_image" height="%d" width="%d" src="%s" alt="Play CAPTCHA Audio" style="border: 0px">', $icon_size, $icon_size, htmlspecialchars($icon_path)) . "\n" .
                      sprintf('<img class="captcha_loading_image rotating" height="%d" width="%d" src="%s" alt="Loading audio" style="display: none">', $icon_size, $icon_size, htmlspecialchars($load_path)) . "\n" .
-                     "</a>\n<noscript>Enable Javascript for audio controls</noscript>\n" .
-                     "</div>\n";
+                     "</a>\n<noscript>Enable Javascript for audio controls</noscript>\n";
+
+			if ( ($parts & Securimage::HTML_ICON_REFRESH) > 0 && $show_refresh_btn) {
+				$icon_path = $securimage_path . '/images/refresh.png';
+				if ($refresh_icon_url) {
+					$icon_path = $refresh_icon_url;
+				}
+				$img_tag = sprintf('<img height="%d" width="%d" src="%s" alt="%s" onclick="this.blur()" style="border: 0px; vertical-align: bottom">',
+					$icon_size, $icon_size, htmlspecialchars($icon_path), htmlspecialchars($refresh_alt));
+
+				$html .= sprintf('<a tabindex="-1" style="border: 0" href="#" title="%s" onclick="%sdocument.getElementById(\'%s\').src = \'%s\' + Math.random(); this.blur(); return false">%s</a><br>',
+					htmlspecialchars($refresh_title),
+					($audio_obj) ? "if (typeof window.{$audio_obj} !== 'undefined') {$audio_obj}.refresh(); " : '',
+					$image_id,
+					$show_path,
+					$img_tag
+				);
+			}
+
+			$html .= "</div>\n";
+
+			$html .= "</div>\n";
 
             // html5 javascript
             if (!$javascript_init) {
@@ -1512,23 +1540,6 @@ class Securimage
             $html .= '<script type="text/javascript">' .
                      "$audio_obj = new SecurimageAudio({ audioElement: '{$image_id}_audio', controlsElement: '{$image_id}_audio_controls' });" .
                      "</script>\n";
-        }
-
-        if ( ($parts & Securimage::HTML_ICON_REFRESH) > 0 && $show_refresh_btn) {
-            $icon_path = $securimage_path . '/images/refresh.png';
-            if ($refresh_icon_url) {
-                $icon_path = $refresh_icon_url;
-            }
-            $img_tag = sprintf('<img height="%d" width="%d" src="%s" alt="%s" onclick="this.blur()" style="border: 0px; vertical-align: bottom">',
-                               $icon_size, $icon_size, htmlspecialchars($icon_path), htmlspecialchars($refresh_alt));
-
-            $html .= sprintf('<a tabindex="-1" style="border: 0" href="#" title="%s" onclick="%sdocument.getElementById(\'%s\').src = \'%s\' + Math.random(); this.blur(); return false">%s</a><br>',
-                    htmlspecialchars($refresh_title),
-                    ($audio_obj) ? "if (typeof window.{$audio_obj} !== 'undefined') {$audio_obj}.refresh(); " : '',
-                    $image_id,
-                    $show_path,
-                    $img_tag
-            );
         }
 
         if ($parts == Securimage::HTML_ALL) {
@@ -1625,7 +1636,7 @@ class Securimage
                 require_once dirname(__FILE__) . '/WavFile.php';
                 $audio = $this->getAudibleCode();
 
-                if (strtolower($format) == 'mp3') {
+                if (strtolower($format ?? '') == 'mp3') {
                     $audio = $this->wavToMp3($audio);
                 }
 
@@ -1754,7 +1765,7 @@ class Securimage
         $time = 0;
         $disp = 'error';
 
-        if ($returnExisting && strlen($this->code) > 0) {
+        if ($returnExisting && strlen($this->code ?? '') > 0) {
             if ($array) {
                 return array(
                     'code'         => $this->code,
@@ -2256,7 +2267,7 @@ class Securimage
         $amp      = array(); // amplitude
         $x        = ($this->image_width / 4); // lowest x coordinate of a pole
         $maxX     = $this->image_width - $x;  // maximum x coordinate of a pole
-        $dx       = mt_rand($x / 10, $x);     // horizontal distance between poles
+        $dx       = mt_rand(intval($x / 10), intval($x));     // horizontal distance between poles
         $y        = mt_rand(20, $this->image_height - 20);  // random y coord
         $dy       = mt_rand(20, $this->image_height * 0.7); // y distance
         $minY     = 20;                                     // minimum y coordinate
@@ -2264,9 +2275,9 @@ class Securimage
 
         // make array of poles AKA attractor points
         for ($i = 0; $i < $numpoles; ++ $i) {
-            $px[$i]  = ($x + ($dx * $i)) % $maxX;
-            $py[$i]  = ($y + ($dy * $i)) % $maxY + $minY;
-            $rad[$i] = mt_rand($this->image_height * 0.4, $this->image_height * 0.8);
+			$px[$i]  = intval($x + floatval($dx * $i)) % intval($maxX);
+            $py[$i]  = intval($y + floatval($dy * $i)) % intval($maxY + $minY);
+            $rad[$i] = mt_rand(intval($this->image_height * 0.4), intval($this->image_height * 0.8));
             $tmp     = ((- $this->frand()) * 0.15) - .15;
             $amp[$i] = $this->perturbation * $tmp;
         }
@@ -2299,10 +2310,10 @@ class Securimage
                 $x *= $this->iscale;
                 $y *= $this->iscale;
                 if ($x >= 0 && $x < $width2 && $y >= 0 && $y < $height2) {
-                    $c = imagecolorat($this->tmpimg, $x, $y);
+                    $c = imagecolorat($this->tmpimg, intval($x), intval($y));
                 }
                 if ($c != $bgCol) { // only copy pixels of letters to preserve any background image
-                    imagesetpixel($this->im, $ix, $iy, $c);
+                    imagesetpixel($this->im, intval($ix), intval($iy), intval($c));
                 }
             }
         }
@@ -2320,7 +2331,7 @@ class Securimage
 
             $theta = ($this->frand() - 0.5) * M_PI * 0.33;
             $w = $this->image_width;
-            $len = mt_rand($w * 0.4, $w * 0.7);
+            $len = mt_rand(intval($w * 0.4), intval($w * 0.7));
             $lwid = mt_rand(0, 2);
 
             $k = $this->frand() * 0.6 + 0.2;
@@ -2338,8 +2349,8 @@ class Securimage
             $ldy = round($dx * $lwid);
 
             for ($i = 0; $i < $n; ++ $i) {
-                $x = $x0 + $i * $dx + $amp * $dy * sin($k * $i * $step + $phi);
-                $y = $y0 + $i * $dy - $amp * $dx * sin($k * $i * $step + $phi);
+                $x = intval($x0 + $i * $dx + $amp * $dy * sin($k * $i * $step + $phi));
+                $y = intval($y0 + $i * $dy - $amp * $dx * sin($k * $i * $step + $phi));
                 imagefilledrectangle($this->im, $x, $y, $x + $lwid, $y + $lwid, $this->gdlinecolor);
             }
         }

@@ -47,6 +47,10 @@
 * @license BSD License
 *
 * Changelog:
+*
+* June 2026
+* Modified by https://brainforge.co.uk for use with PHP 8.4 and Joomla 6.
+*
 *   1.1.1 (09/08/2015)
 *     - Fix degrade() method to call filter correctly (Rasmus Lerdorf)
 *
@@ -1646,7 +1650,7 @@ class WavFile
             if (is_null($mix_blockOffset)) $mix_blockOffset = 0;
 
             $mix_totalBlocks = $mix_wav->getNumBlocks();
-            $mix_numBlocks = @$filters[self::FILTER_MIX]['numBlocks'];
+            $mix_numBlocks = $filters[self::FILTER_MIX]['numBlocks'] ?? null;
             if (is_null($mix_numBlocks)) $mix_numBlocks = $mix_loop ? $mix_totalBlocks : $mix_totalBlocks - $mix_blockOffset;
             $mix_maxBlock = min($mix_blockOffset + $mix_numBlocks, $mix_totalBlocks);
 
@@ -1708,7 +1712,7 @@ class WavFile
 
                 /************* DEGRADE FILTER *******************/
                 if ($filter_degrade) {
-                    $sampleFloat += rand(1000000 * ($degrade_quality - 1), 1000000 * (1 - $degrade_quality)) / 1000000;
+                    $sampleFloat += rand(1000000 * intval($degrade_quality - 1), 1000000 * intval(1 - $degrade_quality)) / 1000000;
                 }
 
                 /************* VOLUME FILTER *******************/

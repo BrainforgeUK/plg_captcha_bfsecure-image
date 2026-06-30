@@ -4,7 +4,7 @@
  * @author    https://www.brainforge.co.uk
  * @version   0.0.1
  * @author    https://www.brainforge.co.uk
- * @copyright (C) 2012-2024 Jonathan Brain. All rights reserved.
+ * @copyright (C) 2012-2026 Jonathan Brain. All rights reserved.
  * @license   GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  */
 
@@ -25,6 +25,7 @@ class Bfsecurimage extends CMSPlugin implements SubscriberInterface
 	protected $app;
 
 	protected $autoloadLanguage = true;
+	protected $responseField;
 
 	/*
 	 */

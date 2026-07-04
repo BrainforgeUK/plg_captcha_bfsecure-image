@@ -1023,8 +1023,11 @@ class Securimage
 	protected $gdsignaturecolor;
 
 	protected $gdnoisecolor;
+	protected $code_entered;
+	protected $correct_code;
 
-    /**
+
+	/**
      * Create a new securimage object, pass options to set in the constructor.
      *
      * The object can then be used to display a captcha, play an audible captcha, or validate a submission.

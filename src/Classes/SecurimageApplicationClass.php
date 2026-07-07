@@ -22,7 +22,7 @@ use Joomla\Session\SessionInterface;
 
 \defined('_JEXEC') or die;
 
-final class securimageApplicationClass extends CMSApplication
+final class SecurimageApplicationClass extends CMSApplication
 {
 	use BfsecurimageColorsTrait;
 	use BfsecurimagePlayTrait;

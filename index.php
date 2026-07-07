@@ -6,7 +6,7 @@
  * @license      GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Classes\securimageApplicationClass;
+use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Classes\SecurimageApplicationClass;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\LanguageFactoryInterface;
 use Joomla\CMS\Plugin\PluginHelper;
@@ -52,7 +52,7 @@ $container->alias('session.web', 'session.web.site')
 JLoader::registerNamespace('Brainforgeuk\Plugin\Captcha\Bfsecurimage', __DIR__ . '/src');
 
 // Instantiate the application.
-$app = new securimageApplicationClass($container->get(CMSInput::class), $container->get('config'), null, $container);
+$app = new SecurimageApplicationClass($container->get(CMSInput::class), $container->get('config'), null, $container);
 
 $app->setSession($container->get(SessionInterface::class));
 

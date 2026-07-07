@@ -287,30 +287,4 @@ abstract class BfsecurimageHelper
 		header("Cache-Control: post-check=0, pre-check=0", false);
 		header("Pragma: no-cache");
 	}
-
-	/*
-	 * We cannot hash this as we have to retrieve it into order to play the audio
-	 */
-	public static function saveCode(SessionInterface $session, $code)
-	{
-		return $session->set(self::$context, $code);
-	}
-
-	/*
-	 */
-	public static function queryCode(SessionInterface$session)
-	{
-		return $session->get(self::$context);
-	}
-
-	/*
-	 */
-	public static function checkCode(SessionInterface$session, $code)
-	{
-		$valid = self::queryCode($session) == $code;
-
-		self::saveCode($session, null);
-
-		return $valid;
-	}
 }

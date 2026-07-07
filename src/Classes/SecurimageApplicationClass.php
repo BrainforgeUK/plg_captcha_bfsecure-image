@@ -8,6 +8,7 @@
 
 namespace Brainforgeuk\Plugin\Captcha\Bfsecurimage\Classes;
 
+use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Traits\BfsecurimageCheckTrait;
 use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Traits\BfsecurimagePlayTrait;
 use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Traits\BfsecurimageShowTrait;
 use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Traits\BfsecurimageColorsTrait;
@@ -26,6 +27,7 @@ final class securimageApplicationClass extends CMSApplication
 	use BfsecurimageColorsTrait;
 	use BfsecurimagePlayTrait;
 	use BfsecurimageShowTrait;
+	use BfsecurimageCheckTrait;
 
 	protected Registry $pluginParams;
 

@@ -8,9 +8,8 @@
 
 namespace Brainforgeuk\Plugin\Captcha\Bfsecurimage\Traits;
 
+use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageCodeHelper;
 use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageHelper;
-use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\Registry\Registry;
 
 \defined('_JEXEC') or die;
 
@@ -210,7 +209,7 @@ Trait BfsecurimageShowTrait
 		$this->codeDisplay = $this->code;
 		$this->code        = ($this->caseSensitive) ? $this->code : strtolower($this->code);
 
-		BfsecurimageHelper::saveCode($this->getSession(), $this->code);
+		BfsecurimageCodeHelper::saveCode($this->getSession(), $this->code, $this->caseSensitive);
 
 		if ($this->noiseLevel > 0)
 		{
@@ -260,7 +259,7 @@ Trait BfsecurimageShowTrait
 
 		$this->codeLength = $params->get('codeLength', 6);
 
-		$this->caseSensitive = $params->get('caseSensitive', true);
+		$this->caseSensitive = $params->get('caseSensitive', false);
 
 		$this->charset = $params->get('charset', 'abcdefghijkmnopqrstuvwxzyABCDEFGHJKLMNPQRSTUVWXZY0123456789');
 

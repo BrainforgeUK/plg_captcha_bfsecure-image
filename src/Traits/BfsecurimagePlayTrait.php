@@ -9,6 +9,7 @@
 namespace Brainforgeuk\Plugin\Captcha\Bfsecurimage\Traits;
 
 use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Classes\SecurimageWavfileClass;
+use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageCodeHelper;
 use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\Filesystem\Folder;
@@ -110,7 +111,7 @@ Trait BfsecurimagePlayTrait
 	{
 		$this->loadPluginPlayParams($config);
 
-		$code = BfsecurimageHelper::queryCode($this->getSession());
+		$code = BfsecurimageCodeHelper::queryCode($this->getSession());
 
 		if (empty($code)) throw new \Exception(Text::_('PLG_BFSECURIMAGE_ERROR_NOCAPTCHACODE'));
 

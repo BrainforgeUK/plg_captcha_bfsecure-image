@@ -24,11 +24,13 @@ $imageSrc = $pluginUri . 'index.php?task=show'
 <table>
     <tr>
         <td class="captcha_bfsecurimage_image">
-            <img id="captcha_bfsecurimage_image"
-                 class="bfcaptcha_image"
-                 src="<?php echo $imageSrc; ?>&<?php echo time(); ?>"
-                 alt="<?php echo Text::_('PLG_BFSECURIMAGE_IMAGE_CHALLENGE'); ?>"
-            />
+            <label for="bfsecurimage_response_field">
+                <img id="captcha_bfsecurimage_image"
+                     class="bfcaptcha_image"
+                     src="<?php echo $imageSrc; ?>&<?php echo time(); ?>"
+                     alt="<?php echo Text::_('PLG_BFSECURIMAGE_IMAGE_CHALLENGE'); ?>"
+                />
+            </label>
         </td>
         <td class="captcha_bfsecurimage_buttons">
             <?php

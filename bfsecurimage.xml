@@ -7,7 +7,7 @@
     <authorUrl>https://www.brainforge.co.uk</authorUrl>
     <copyright>Copyright 2012-2026 Jonathan Brain. All rights reserved.</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-    <version>6.2.0</version>
+    <version>7.0.0</version>
     <description>PLG_CAPTCHA_BFSECURIMAGE_XML_DESCRIPTION</description>
 
     <namespace path="src">Brainforgeuk\Plugin\Captcha\Bfsecurimage</namespace>
@@ -16,11 +16,20 @@
 
     <files>
         <filename>bfsecurimage.xml</filename>
-        <folder>includes</folder>
+        <filename>index.php</filename>
+        <folder>files</folder>
         <folder>language</folder>
         <folder>services</folder>
         <folder plugin="bfsecurimage">src</folder>
     </files>
+
+    <media destination="plg_captcha_bfsecurimage"
+           folder="media">
+        <folder>audio</folder>
+        <folder>css</folder>
+        <folder>images</folder>
+        <folder>js</folder>
+    </media>
 
     <config>
         <fields name="params">
@@ -34,50 +43,28 @@
                        default="PLG_BFSECURIMAGE_RESPONSEFIELD_DEFAULT"
                        translate_default="true"
                        translate="true"
-                >
-                </field>
+                />
+
                 <field name="audio"
                        type="radio"
                        default="0"
                        label="PLG_BFSECURIMAGE_SHOW_AUDIO_CHALLENGE_LABEL"
-                       description="PLG_BFSECURIMAGE_SHOW_AUDIO_CHALLENGE_DESC">
+                       description="PLG_BFSECURIMAGE_SHOW_AUDIO_CHALLENGE_DESC"
+                       filter="integer"
+                >
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
                 </field>
+
                 <field name="refresh"
                        type="radio"
                        default="0"
                        label="PLG_BFSECURIMAGE_SHOW_NEW_CHALLENGE_LABEL"
-                       description="PLG_BFSECURIMAGE_SHOW_NEW_CHALLENGE_DESC">
+                       description="PLG_BFSECURIMAGE_SHOW_NEW_CHALLENGE_DESC"
+                       filter="integer"
+                >
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
-                </field>
-            </fieldset>
-
-            <fieldset name="css"
-                      label="PLG_BFSECURIMAGE_CSS_FIELDSET">
-
-                <field
-                        name="cssnote" type="note"
-                        description="PLG_BFSECURIMAGE_CSS_FIELDSET_DESC"/>
-
-                <field
-                        name="cssmode" type="radio" class="btn-group"
-                        label="PLG_BFSECURIMAGE_CSSMODE_LABEL" default="1">
-                    <option value="0">JOFF</option>
-                    <option value="1">JON</option>
-                </field>
-
-                <field
-                        name="customcss"
-                        type="textarea"
-                        label="PLG_BFSECURIMAGE_CSSCUSTOM_LABEL"
-                        showon="cssmode:1"
-                        filter="raw"
-                        rows="10"
-                        cols="20"
-                        translate_default="true"
-                        default="PLG_BFSECURIMAGE_CSSCUSTOM_DEFAULT">
                 </field>
             </fieldset>
         </fields>

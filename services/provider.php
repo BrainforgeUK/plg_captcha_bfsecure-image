@@ -1,6 +1,6 @@
 <?php
 /**
- * @package   CAPTCHA plugin uses Securimage
+ * @package   CAPTCHA plugin using Securimage
  * @author    https://www.brainforge.co.uk
  * @version   0.0.1
  * @author    https://www.brainforge.co.uk

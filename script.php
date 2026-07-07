@@ -1,12 +1,14 @@
 <?php
 /**
- * @package		This CAPTCHA plugin uses Securimage.
+ * @package		CAPTCHA plugin using Securimage.
  * @subpackage	plg_secureimage
  * @copyright	Copyright (C) 2018-2024 Jonathan Brain. All rights reserved.
  * @license		GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access
+use Joomla\Filesystem\Folder;
+
 defined('_JEXEC') or die('Restricted access');
 
 /**
@@ -39,6 +41,11 @@ class plgCaptchaBFSecurimageInstallerScript
 	 */
 	function update($parent)
 	{
+		$includes = JPATH_SITE . '/plugins/plgCaptchaBFSecurimage/includes';
+		if (is_dir($includes))
+		{
+			Folder::delete($includes);
+		}
 	}
 
 	/**

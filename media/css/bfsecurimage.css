@@ -1,0 +1,7 @@
+td.captcha_bfsecurimage_image { padding:1rem; }
+
+td.captcha_bfsecurimage_image img { width: 215px; height: 80px; }
+
+div.captcha_bfsecurimage_button { margin:1rem; }
+
+div.captcha_bfsecurimage_button img { height: 32px; }

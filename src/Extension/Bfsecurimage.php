@@ -1,6 +1,6 @@
 <?php
 /**
- * @package   CAPTCHA plugin uses Securimage
+ * @package   CAPTCHA plugin using Securimage
  * @author    https://www.brainforge.co.uk
  * @version   0.0.1
  * @author    https://www.brainforge.co.uk
@@ -10,7 +10,8 @@
 
 namespace Brainforgeuk\Plugin\Captcha\Bfsecurimage\Extension;
 
-use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageHelper;
+use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageDisplayHelper;
+use Joomla\CMS\Environment\Browser;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\CMSPlugin;
@@ -57,20 +58,17 @@ class Bfsecurimage extends CMSPlugin implements SubscriberInterface
 	{
 		if (empty($this->params)) return '';
 
+		$browser = Browser::getInstance();
+		if (!empty($browser) && $browser->isRobot())
+		{
+			return 'Captcha not accessible to robot.';
+		}
+
 		$this->responseField = $this->params->get('responsefield', 'bfsecurimage_response_field');
 		if (empty($this->responseField))
 		{
 			Log::add(Text::sprintf('JLIB_CAPTCHA_ERROR_PLUGIN_NOT_FOUND', $name), Log::WARNING, 'jerror');
 			return '';
-		}
-
-		if ($this->params->get('cssmode', 1))
-		{
-			$css = trim(Text::_($this->params->get('customcss', 'PLG_BFSECURIMAGE_CSSCUSTOM_DEFAULT')));
-			if (!empty($css))
-			{
-				$this->app->getDocument()->addStyleDeclaration($css);
-			}
 		}
 
 		$options = array();
@@ -83,8 +81,7 @@ class Bfsecurimage extends CMSPlugin implements SubscriberInterface
 		$options['input_text'] = Text::_('PLG_BFSECURIMAGE_VERIFY_CHALLENGE');
 		$options['input_id'] = Text::_('PLG_BFSECURIMAGE_RESPONSEFIELD_DEFAULT');
 
-		$securImage = BfsecurimageHelper::getSecureimageInstance();
-		return $securImage->getCaptchaHtml($options);
+		return BfsecurimageDisplayHelper::getCaptchaHtml($options, $this->params);
 	}
 
 	/**
@@ -96,13 +93,9 @@ class Bfsecurimage extends CMSPlugin implements SubscriberInterface
 	{
 		$this->responseField = Text::_($this->params->get('responsefield'));
 		$solution = $this->app->getInput()->request->get($this->responseField, '', 'string');
-		if (empty($solution))
-		{
-			return false;
-		}
+		if (empty($solution)) return false;
 
-		$securImage = BfsecurimageHelper::getSecureimageInstance();
-		$result = $securImage->check($solution);
+		$result = BfsecurimageDisplayHelper::phpcheck($solution);
 		return !$result ? false : $result;
 	}
 }

@@ -21,6 +21,7 @@
         <folder>language</folder>
         <folder>services</folder>
         <folder plugin="bfsecurimage">src</folder>
+        <folder>tmpl</folder>
     </files>
 
     <media destination="plg_captcha_bfsecurimage"

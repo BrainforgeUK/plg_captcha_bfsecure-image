@@ -11,6 +11,7 @@
 namespace Brainforgeuk\Plugin\Captcha\Bfsecurimage\Extension;
 
 use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageDisplayHelper;
+use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageHelper;
 use Joomla\CMS\Environment\Browser;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
@@ -95,7 +96,7 @@ class Bfsecurimage extends CMSPlugin implements SubscriberInterface
 		$solution = $this->app->getInput()->request->get($this->responseField, '', 'string');
 		if (empty($solution)) return false;
 
-		$result = BfsecurimageDisplayHelper::phpcheck($solution);
+		$result = BfsecurimageHelper::checkCode($this->app->getSession(), $solution);
 		return !$result ? false : $result;
 	}
 }

@@ -9,6 +9,8 @@
 namespace Brainforgeuk\Plugin\Captcha\Bfsecurimage\Traits;
 
 use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Classes\SecurimageColorClass;
+use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageHelper;
+use Joomla\Filesystem\Folder;
 
 \defined('_JEXEC') or die;
 
@@ -114,7 +116,7 @@ trait BfsecurimageColorsTrait
 
 		if ($this->useBackgroundImage)
 		{
-			$this->backgroundImage = BfsecurimageColorsTrait::getBackgroundFromDirectory();
+			$this->backgroundImage = self::getBackgroundFromDirectory();
 		}
 
 		if (empty($this->backgroundImage)) return;
@@ -136,5 +138,20 @@ trait BfsecurimageColorsTrait
 			$this->imgWidth, $this->imgHeight,
 			imagesx($newImage), imagesy($newImage));
 	}
+
+	/**
+	 * Scan the directory for a background image to use
+	 *
+	 * @return string|bool
+	 */
+	protected static function getBackgroundFromDirectory()
+	{
+		$backgroundDirectory = dirname(__DIR__, 2) . '/files/backgrounds';
+		if (!is_dir($backgroundDirectory)) return null;
+
+		$images = Folder::files($backgroundDirectory, '(\\.jpg|\\.gif|\\.png)$', true, true);
+		if (empty($images)) return null;
+
+		return $images[mt_rand(0, sizeof($images)-1)];
+	}
 }
-?>

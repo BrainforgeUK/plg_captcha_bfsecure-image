@@ -8,13 +8,15 @@
 
 namespace Brainforgeuk\Plugin\Captcha\Bfsecurimage\Classes;
 
-use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Traits\BfsecurimageCheckTrait;
 use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Traits\BfsecurimagePlayTrait;
 use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Traits\BfsecurimageShowTrait;
 use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Traits\BfsecurimageColorsTrait;
+use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Traits\BfsecurimageTrait;
 use Joomla\Application\Web\WebClient;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Database\DatabaseAwareTrait;
+use Joomla\Database\DatabaseInterface;
 use Joomla\DI\Container;
 use Joomla\Input\Input;
 use Joomla\Registry\Registry;
@@ -24,46 +26,13 @@ use Joomla\Session\SessionInterface;
 
 final class SecurimageApplicationClass extends CMSApplication
 {
+	use BfsecurimageTrait;
 	use BfsecurimageColorsTrait;
 	use BfsecurimagePlayTrait;
 	use BfsecurimageShowTrait;
-	use BfsecurimageCheckTrait;
+	use DatabaseAwareTrait;
 
 	protected Registry $pluginParams;
-
-	/**
-	 * The length of the captcha code
-	 *
-	 * @var int
-	 */
-	protected int $codeLength;
-
-	/**
-	 * Whether the captcha should be case sensitive or not.
-	 *
-	 * Not recommended, use only for maximum protection.
-	 *
-	 * @var bool
-	 */
-	protected bool $caseSensitive;
-
-	/**
-	 * The captcha challenge value.
-	 *
-	 * Either the case-sensitive/insensitive word captcha, or the solution to the math captcha.
-	 *
-	 * @var string Captcha challenge value
-	 */
-	protected string $code;
-
-	/**
-	 * The display value of the captcha to draw on the image
-	 *
-	 * Either the word captcha or the math equation to present to the user
-	 *
-	 * @var string Captcha display value to draw on the image
-	 */
-	protected string $codeDisplay;
 
 	/**
 	 * Flag indicating whether or not HTTP headers will be sent when outputting captcha image/audio
@@ -114,7 +83,12 @@ final class SecurimageApplicationClass extends CMSApplication
 	{
 		parent::__construct($input, $config, $client, $container);
 
-		$this->setSession($container->get(SessionInterface::class));
+		if ($container !== null)
+		{
+			$this->setSession($container->get(SessionInterface::class));
+
+			$this->setDatabase($container->get(DatabaseInterface::class));
+		}
 	}
 
 	/*
@@ -133,5 +107,18 @@ final class SecurimageApplicationClass extends CMSApplication
 		$plugin = PluginHelper::getPlugin('captcha', 'bfsecurimage');
 
 		return $this->pluginParams = new Registry($plugin->params);
+	}
+
+	/*
+	 */
+	public function runCaptchaTask()
+	{
+		$task = $this->getCaptchaTask($this->input);
+
+		$captchaKey = $this->getCaptchaKey($this->input);
+
+		$remoteIp = $this->getRemoteIp();
+
+		$this->$task($captchaKey, $remoteIp);
 	}
 }

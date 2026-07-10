@@ -7,7 +7,7 @@
     <authorUrl>https://www.brainforge.co.uk</authorUrl>
     <copyright>Copyright 2012-2026 Jonathan Brain. All rights reserved.</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-    <version>7.0.0</version>
+    <version>7.1.0</version>
     <description>PLG_CAPTCHA_BFSECURIMAGE_XML_DESCRIPTION</description>
 
     <namespace path="src">Brainforgeuk\Plugin\Captcha\Bfsecurimage</namespace>
@@ -35,22 +35,11 @@
     <config>
         <fields name="params">
             <fieldset name="basic">
-                <field name="responsefield"
-                       type="text"
-                       size="40"
-                       required="true"
-                       label="PLG_BFSECURIMAGE_RESPONSEFIELD_LABEL"
-                       description="PLG_BFSECURIMAGE_RESPONSEFIELD_DESC"
-                       default="PLG_BFSECURIMAGE_RESPONSEFIELD_DEFAULT"
-                       translate_default="true"
-                       translate="true"
-                />
-
                 <field name="audio"
                        type="radio"
                        default="0"
-                       label="PLG_BFSECURIMAGE_SHOW_AUDIO_CHALLENGE_LABEL"
-                       description="PLG_BFSECURIMAGE_SHOW_AUDIO_CHALLENGE_DESC"
+                       label="PLG_CAPTCHA_BFSECURIMAGE_SHOW_AUDIO_CHALLENGE_LABEL"
+                       description="PLG_CAPTCHA_BFSECURIMAGE_SHOW_AUDIO_CHALLENGE_DESC"
                        filter="integer"
                 >
                     <option value="0">JHIDE</option>
@@ -60,8 +49,8 @@
                 <field name="refresh"
                        type="radio"
                        default="0"
-                       label="PLG_BFSECURIMAGE_SHOW_NEW_CHALLENGE_LABEL"
-                       description="PLG_BFSECURIMAGE_SHOW_NEW_CHALLENGE_DESC"
+                       label="PLG_CAPTCHA_BFSECURIMAGE_SHOW_NEW_CHALLENGE_LABEL"
+                       description="PLG_CAPTCHA_BFSECURIMAGE_SHOW_NEW_CHALLENGE_DESC"
                        filter="integer"
                 >
                     <option value="0">JHIDE</option>

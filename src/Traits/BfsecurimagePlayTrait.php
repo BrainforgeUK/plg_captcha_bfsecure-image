@@ -9,8 +9,6 @@
 namespace Brainforgeuk\Plugin\Captcha\Bfsecurimage\Traits;
 
 use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Classes\SecurimageWavfileClass;
-use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageCodeHelper;
-use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\Filesystem\Folder;
 
@@ -107,25 +105,23 @@ Trait BfsecurimagePlayTrait
 
 	/*
 	 */
-	public function play($config=[])
+	protected function play($captchaKey, $remoteIp, $config=[])
 	{
 		$this->loadPluginPlayParams($config);
 
-		$code = BfsecurimageCodeHelper::queryCode($this->getSession());
+		$this->loadCode($captchaKey, $remoteIp);
 
-		if (empty($code)) throw new \Exception(Text::_('PLG_BFSECURIMAGE_ERROR_NOCAPTCHACODE'));
-
-		$length = BfsecurimageHelper::strlen($code);
+		$length = self::strlen($this->codeDisplay);
 
 		$letters = [];
 		for($i = 0; $i < $length; ++$i)
 		{
-			$letters[] = BfsecurimageHelper::substr($code, $i, 1);
+			$letters[] = self::substr($this->codeDisplay, $i, 1);
 		}
 
 		$audio = $this->generateWAV($letters);
 
-		BfsecurimageHelper::outputSound($audio);
+		self::outputSound($audio);
 	}
 
 	/*
@@ -295,7 +291,7 @@ Trait BfsecurimagePlayTrait
 	 *
 	 * @return bool|string  false if a file could not be found, or a string containing the path to the file.
 	 */
-	public function getRandomNoiseFile()
+	protected function getRandomNoiseFile()
 	{
 		$noiseFiles = Folder::files($this->audio_noise_path, '\\.wav', true, true);
 		if (empty($noiseFiles)) return false;
@@ -317,7 +313,7 @@ Trait BfsecurimagePlayTrait
 	 * @param int $numEffects  How many effects to chain together
 	 * @return string  A string of valid SoX effects and their respective options.
 	 */
-	public function getSoxEffectChain($numEffects = 2)
+	protected function getSoxEffectChain($numEffects = 2)
 	{
 		$effectsList = array('bend', 'chorus', 'overdrive', 'pitch', 'reverb', 'tempo', 'tremolo');
 		$effects     = array_rand($effectsList, $numEffects);
@@ -393,57 +389,112 @@ Trait BfsecurimagePlayTrait
 	}
 
 	/**
-	 * This function is not yet used.
+	 * Output audio data with http range support.
 	 *
-	 * Generate random background noise from sweeping oscillators
-	 *
-	 * @param float $duration  How long in seconds the generated sound will be
-	 * @param int $numChannels Number of channels in output wav
-	 * @param int $sampleRate  Sample rate of output wav
-	 * @param int $bitRate     Bits per sample (8, 16, 24)
-	 * @return string          Audio data in wav format
+	 * @param string $audio Raw audio file content
 	 */
-	public function getSoxNoiseData($duration, $numChannels, $sampleRate, $bitRate)
+	protected static function rangeDownload($audio)
 	{
-		$shapes = array('sine', 'square', 'triangle', 'sawtooth', 'trapezium');
-		$steps  = array(':', '+', '/', '-');
-		$selShapes = array_rand($shapes, 2);
-		$selSteps  = array_rand($steps, 2);
-		$sweep0    = array();
-		$sweep0[0] = mt_rand(100, 700);
-		$sweep0[1] = mt_rand(1500, 2500);
-		$sweep1    = array();
-		$sweep1[0] = mt_rand(500, 1000);
-		$sweep1[1] = mt_rand(1200, 2000);
+		$audioLength = $size = strlen($audio);
 
-		if (mt_rand(0, 10) % 2 == 0)
+		if (isset($_SERVER['HTTP_RANGE']))
 		{
-			$sweep0 = array_reverse($sweep0);
+			// bytes=byte-range-set
+			list( , $range) = explode('=', $_SERVER['HTTP_RANGE']);
+			$range = trim($range);
+
+			if (strpos($range, ',') !== false)
+			{
+				// eventually, we should handle requests with multiple ranges
+				// most likely these types of requests will never be sent
+				header('HTTP/1.1 416 Range Not Satisfiable');
+				echo "<h1>Range Not Satisfiable</h1>";
+				exit;
+			}
+
+			if (preg_match('/(\d+)-(\d+)/', $range, $match))
+			{
+				// bytes n - m
+				$range = array(intval($match[1]), intval($match[2]));
+			}
+			else if (preg_match('/(\d+)-$/', $range, $match))
+			{
+				// bytes n - last byte of file
+				$range = array(intval($match[1]), null);
+			}
+			else if (preg_match('/-(\d+)/', $range, $match))
+			{
+				// final n bytes of file
+				$range = array($size - intval($match[1]), $size - 1);
+			}
+
+			if ($range[1] === null)
+			{
+				$range[1] = $size - 1;
+			}
+
+			$length = $range[1] - $range[0] + 1;
+			$audio = substr($audio, $range[0], $length);
+			$audioLength = strlen($audio);
+
+			header('HTTP/1.1 206 Partial Content');
+			header("Content-Range: bytes {$range[0]}-{$range[1]}/{$size}");
+
+			if ($range[0] < 0 ||$range[1] >= $size || $range[0] >= $size || $range[0] > $range[1])
+			{
+				header('HTTP/1.1 416 Range Not Satisfiable');
+				echo "<h1>Range Not Satisfiable</h1>";
+				exit;
+			}
 		}
 
-		if (mt_rand(0, 10) % 2 == 0)
+		header('Content-Length: ' . $audioLength);
+
+		echo $audio;
+	}
+
+	/*
+	 */
+	protected static function outputSound($audio, $soundType='wav', $sendHeaders=false)
+	{
+		// Only send the content-type headers if no headers have been output this will ease debugging on misconfigured
+		// servers where warnings may have been output which break the output and prevent easily viewing source to see the error.
+		if (self::canSendHeaders())
 		{
-			$sweep1 = array_reverse($sweep1);
+			if ($sendHeaders)
+			{
+				self::cacheHeaders();
+
+				header('Accept-Ranges: bytes');
+			}
+
+			if (isset($_SERVER['HTTP_RANGE'])) {
+				$uniq = (isset($_SERVER['HTTP_X_PLAYBACK_SESSION_ID'])) ?
+					'ID' . $_SERVER['HTTP_X_PLAYBACK_SESSION_ID']   :
+					'ID' . md5($_SERVER['REQUEST_URI']);
+			} else {
+				$uniq = md5(uniqid(microtime()));
+			}
+
+			switch ($soundType)
+			{
+				case 'wav':
+					header('Content-Disposition: attachment; filename="securimage_audio-' . $uniq . '.wav"');
+					header('Content-type: audio/wav');
+					break;
+				default:
+					if ($sendHeaders) header("Content-Type: audio");
+					break;
+			}
+
+			self::rangeDownload($audio);
 		}
-
-		$cmd = sprintf("%s -c %d -r %d -b %d -n -t wav - synth noise create vol 0.3 synth %.2f %s mix %d%s%d vol 0.3 synth %.2f %s fmod %d%s%d vol 0.3",
-			$this->sox_binary_path,
-			$numChannels,
-			$sampleRate,
-			$bitRate,
-			$duration,
-			$shapes[$selShapes[0]],
-			$sweep0[0],
-			$steps[$selSteps[0]],
-			$sweep0[1],
-			$duration,
-			$shapes[$selShapes[1]],
-			$sweep1[0],
-			$steps[$selSteps[1]],
-			$sweep1[1]
-		);
-		$data = `$cmd`;
-
-		return $data;
+		else
+		{
+			echo '<hr /><strong>'
+				.'Failed to generate audio file, content has already been '
+				.'output.<br />This is most likely due to misconfiguration or '
+				.'a PHP error was sent to the browser.</strong>';
+		}
 	}
 }

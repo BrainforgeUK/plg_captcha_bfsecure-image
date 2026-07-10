@@ -16,9 +16,12 @@ use Joomla\Registry\Registry;
 
 \defined('_JEXEC') or die;
 
+$captchaKey = random_int(0,999999999999);
+
 $mediaUri = Uri::root() . 'media/plg_captcha_bfsecurimage/';
 $pluginUri = Uri::root() . 'plugins/captcha/bfsecurimage/';
-$imageSrc = $pluginUri . 'index.php?task=show'
+$imageSrc = $pluginUri . 'index.php?task=show&key=' . $captchaKey;
+$playSrc = $pluginUri . 'index.php?task=play&key=' . $captchaKey;
 
 ?>
 <table>
@@ -28,7 +31,7 @@ $imageSrc = $pluginUri . 'index.php?task=show'
                 <img id="captcha_bfsecurimage_image"
                      class="bfcaptcha_image"
                      src="<?php echo $imageSrc; ?>&<?php echo time(); ?>"
-                     alt="<?php echo Text::_('PLG_BFSECURIMAGE_IMAGE_CHALLENGE'); ?>"
+                     alt="<?php echo Text::_('PLG_CAPTCHA_BFSECURIMAGE_IMAGE_CHALLENGE'); ?>"
                 />
             </label>
         </td>
@@ -36,35 +39,42 @@ $imageSrc = $pluginUri . 'index.php?task=show'
             <?php
 			if (intval($params->get('audio')))
             {
-                ?>
-                <div id="captcha_image_audio_div">
+                $source = '<source id="captcha_image_source_wav" src="%s" type="audio/wav" />';
+
+                $audio = '
                     <audio id="captcha_image_audio"
                            preload="none"
                            style="display: none"
                            onended="bfsecurimageAudioEnded(this);"
-                           data-audioicon="<?php echo $mediaUri; ?>images/audio_icon.png"
-                           data-loadingicon="<?php echo $mediaUri; ?>images/loading.png"
+                           data-audioicon="' . $mediaUri . 'images/audio_icon.png"
+                           data-loadingicon="' . $mediaUri . 'images/loading.png"
+                           data-source="' . base64_encode($source) . '"
                     >
-                        <source id="captcha_image_source_wav"
-                                src="<?php echo $pluginUri; ?>index.php?task=play&id=<?php echo uniqid(); ?>"
-                                type="audio/wav">
-                        <?php
-                        ?>
+                    %s
                     </audio>
+                ';
+                ?>
+                <div id="captcha_image_audio_div"
+                     data-audio="<?php echo base64_encode($audio); ?>"
+                     data-source="<?php echo base64_encode($source); ?>"
+                >
+                    <?php
+                    echo sprintf($audio, sprintf($source, $playSrc . '&' . time()));
+                    ?>
                 </div>
                 <div id="captcha_bfsecurimage_audio_button"
                      class="captcha_bfsecurimage_button"
                 >
                     <a tabindex="-1"
                        href="#"
-                       title="<?php echo Text::_('PLG_BFSECURIMAGE_REFRESH_CHALLENGE'); ?>"
+                       title="<?php echo Text::_('PLG_CAPTCHA_BFSECURIMAGE_REFRESH_CHALLENGE'); ?>"
                        onclick="return bfsecurimagePlay(this);"
                     >
                         <img id="captcha_bfsecurimage_play_image"
                              class="captcha_bfsecurimage_play_image"
                              src="<?php echo $mediaUri; ?>images/audio_icon.png"
-                             title="<?php echo Text::_('PLG_BFSECURIMAGE_AUDIO_CHALLENGE'); ?>"
-                             alt="<?php echo Text::_('PLG_BFSECURIMAGE_AUDIO_CHALLENGE'); ?>"
+                             title="<?php echo Text::_('PLG_CAPTCHA_BFSECURIMAGE_AUDIO_CHALLENGE'); ?>"
+                             alt="<?php echo Text::_('PLG_CAPTCHA_BFSECURIMAGE_AUDIO_CHALLENGE'); ?>"
                         />
                     </a>
                 </div>
@@ -77,12 +87,13 @@ $imageSrc = $pluginUri . 'index.php?task=show'
                 >
                     <a tabindex="-1"
                        href="#"
-                       title="<?php echo Text::_('PLG_BFSECURIMAGE_REFRESH_CHALLENGE'); ?>"
+                       title="<?php echo Text::_('PLG_CAPTCHA_BFSECURIMAGE_REFRESH_CHALLENGE'); ?>"
                        onclick="return bfsecurimageRefresh(this);"
-                       data-imgsrc="<?php echo $imageSrc; ?>";
+                       data-imgsrc="<?php echo $imageSrc; ?>"
+                       data-playsrc="<?php echo $playSrc; ?>"
                     >
                         <img src="<?php echo $mediaUri; ?>images/refresh.png"
-                             alt="<?php echo Text::_('PLG_BFSECURIMAGE_REFRESH_CHALLENGE'); ?>"
+                             alt="<?php echo Text::_('PLG_CAPTCHA_BFSECURIMAGE_REFRESH_CHALLENGE'); ?>"
                         />
                     </a>
                 </div>
@@ -94,12 +105,16 @@ $imageSrc = $pluginUri . 'index.php?task=show'
     <tr>
         <td  class="captcha_bfsecurimage_response"
              colspan="2">
-            <label for="bfsecurimage_response_field"><?php echo Text::_('PLG_BFSECURIMAGE_VERIFY_CHALLENGE'); ?></label>
+            <label for="bfsecurimage-captcha-response"><?php echo Text::_('PLG_CAPTCHA_BFSECURIMAGE_VERIFY_CHALLENGE'); ?></label>
             <input type="text"
-                   name="<?php echo Text::_($params->get('responsefield')); ?>"
-                   id="bfsecurimage_response_field"
+                   name="bfsecurimage-captcha-response"
+                   id="bfsecurimage-captcha-response"
                    autocomplete="off"
                    required="required"
+            />
+            <input type="hidden"
+                   name="bfsecurimage-captcha-key"
+                   value="<?php echo $captchaKey; ?>"
             />
         </td>
     </tr>
@@ -107,7 +122,8 @@ $imageSrc = $pluginUri . 'index.php?task=show'
 
 <link type="text/css"
       href="<?php echo $mediaUri; ?>css/bfsecurimage.css"
-      rel="stylesheet" />
+      rel="stylesheet"
+/>
 
 <script type="text/javascript"
         src="<?php echo $mediaUri; ?>js/bfsecurimage.js">

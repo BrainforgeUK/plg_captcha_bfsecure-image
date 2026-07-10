@@ -8,9 +8,6 @@
 
 namespace Brainforgeuk\Plugin\Captcha\Bfsecurimage\Traits;
 
-use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageCodeHelper;
-use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageHelper;
-
 \defined('_JEXEC') or die;
 
 Trait BfsecurimageShowTrait
@@ -182,7 +179,7 @@ Trait BfsecurimageShowTrait
 
 	/*
 	 */
-	public function show($config=[])
+	public function show($captchaKey, $remoteIp, $config=[])
 	{
 		$this->loadPluginShowParams($config);
 
@@ -204,12 +201,9 @@ Trait BfsecurimageShowTrait
 
 		$this->setBackground();
 
-		$this->code = BfsecurimageHelper::generateCode($this->charset, $this->codeLength);
+		$this->generateCode();
 
-		$this->codeDisplay = $this->code;
-		$this->code        = ($this->caseSensitive) ? $this->code : strtolower($this->code);
-
-		BfsecurimageCodeHelper::saveCode($this->getSession(), $this->code, $this->caseSensitive);
+		$this->saveCode($captchaKey, $remoteIp);
 
 		if ($this->noiseLevel > 0)
 		{
@@ -233,7 +227,7 @@ Trait BfsecurimageShowTrait
 			$this->addSignature();
 		}
 
-		BfsecurimageHelper::outputImage($this->img, $this->imageType, $this->sendHeaders);
+		self::outputImage($this->img, $this->imageType, $this->sendHeaders);
 
 		$this->close();
 	}
@@ -362,7 +356,7 @@ Trait BfsecurimageShowTrait
 			$px[$i]  = intval($x + floatval($dx * $i)) % intval($maxX);
 			$py[$i]  = intval($y + floatval($dy * $i)) % intval($maxY + $minY);
 			$rad[$i] = mt_rand(intval($this->imgHeight * 0.4), intval($this->imgHeight * 0.8));
-			$tmp     = ((- BfsecurimageHelper::frand()) * 0.15) - .15;
+			$tmp     = ((- self::frand()) * 0.15) - .15;
 			$amp[$i] = $this->perturbation * $tmp /100;
 		}
 
@@ -414,22 +408,22 @@ Trait BfsecurimageShowTrait
 		for ($line = 0; $line < $this->numLines; ++ $line)
 		{
 			$x = $this->imgWidth * (1 + $line) / ($this->numLines + 1);
-			$x += (0.5 - BfsecurimageHelper::frand()) * $this->imgWidth / $this->numLines;
+			$x += (0.5 - self::frand()) * $this->imgWidth / $this->numLines;
 			$y = mt_rand($this->imgHeight * 0.1, $this->imgHeight * 0.9);
 
-			$theta = (BfsecurimageHelper::frand() - 0.5) * M_PI * 0.33;
+			$theta = (self::frand() - 0.5) * M_PI * 0.33;
 			$w = $this->imgWidth;
 			$len = mt_rand(intval($w * 0.4), intval($w * 0.7));
 			$lwid = mt_rand(0, 2);
 
-			$k = BfsecurimageHelper::frand() * 0.6 + 0.2;
+			$k = self::frand() * 0.6 + 0.2;
 			$k = $k * $k * 0.5;
-			$phi = BfsecurimageHelper::frand() * 6.28;
+			$phi = self::frand() * 6.28;
 			$step = 0.5;
 			$dx = $step * cos($theta);
 			$dy = $step * sin($theta);
 			$n = $len / $step;
-			$amp = 1.5 * BfsecurimageHelper::frand() / ($k + 5.0 / $len);
+			$amp = 1.5 * self::frand() / ($k + 5.0 / $len);
 			$x0 = $x - 0.5 * $len * cos($theta);
 			$y0 = $y - 0.5 * $len * sin($theta);
 
@@ -471,11 +465,11 @@ Trait BfsecurimageShowTrait
 
 		$captchaText = $this->codeDisplay;
 
-		if ($this->useRandomSpaces && BfsecurimageHelper::strpos($captchaText, ' ') === false)
+		if ($this->useRandomSpaces && self::strpos($captchaText, ' ') === false)
 		{
 			if (mt_rand(1, 100) % 5 > 0)
 			{ // ~20% chance no spacing added
-				$index  = mt_rand(1, BfsecurimageHelper::strlen($captchaText) -1);
+				$index  = mt_rand(1, self::strlen($captchaText) -1);
 				$spaces = mt_rand(1, 3);
 
 				// in general, we want all characters drawn close together to
@@ -485,9 +479,9 @@ Trait BfsecurimageShowTrait
 
 				$captchaText = sprintf(
 					'%s%s%s',
-					BfsecurimageHelper::substr($captchaText, 0, $index),
+					self::substr($captchaText, 0, $index),
 					str_repeat(' ', $spaces),
-					BfsecurimageHelper::substr($captchaText, $index)
+					self::substr($captchaText, $index)
 				);
 			}
 		}
@@ -518,18 +512,18 @@ Trait BfsecurimageShowTrait
 			$angleN = -$angleN;
 		}
 
-		$step   = abs($angle0 - $angleN) / (BfsecurimageHelper::strlen($captchaText) - 1);
+		$step   = abs($angle0 - $angleN) / (self::strlen($captchaText) - 1);
 		$step   = ($angle0 > $angleN) ? -$step : $step;
 		$angle  = $angle0;
 
-		for ($c = 0; $c < BfsecurimageHelper::strlen($captchaText); ++$c)
+		for ($c = 0; $c < self::strlen($captchaText); ++$c)
 		{
 			$angles[] = $angle;  // the angle of this character
 			$dist     = mt_rand(-2, 0) * $scale; // random distance between this and next character
 			$distance[] = $dist;
-			$char     = BfsecurimageHelper::substr($captchaText, $c, 1); // the character to draw for this sequence
+			$char     = self::substr($captchaText, $c, 1); // the character to draw for this sequence
 
-			$dim = BfsecurimageHelper::getCharacterDimensions($char, $fontSize, $angle, $this->ttfFile); // calculate dimensions of this character
+			$dim = self::getCharacterDimensions($char, $fontSize, $angle, $this->ttfFile); // calculate dimensions of this character
 
 			$dim[0] += $dist;   // add the distance to the dimension (negative to bring them closer)
 			$txtWid += $dim[0]; // increment width based on character width
@@ -590,9 +584,9 @@ Trait BfsecurimageShowTrait
 
 		$st = $scale * mt_rand(5, 10);
 
-		for ($c = 0; $c < BfsecurimageHelper::strlen($captchaText); ++$c)
+		for ($c = 0; $c < self::strlen($captchaText); ++$c)
 		{
-			$char  = BfsecurimageHelper::substr($captchaText, $c, 1);
+			$char  = self::substr($captchaText, $c, 1);
 			$angle = $angles[$c];
 			$dim   = $dims[$c];
 
@@ -640,5 +634,46 @@ Trait BfsecurimageShowTrait
 		$y = $this->imgHeight - 3;
 
 		imagettftext($this->img, 10, 0, $x, $y, $this->gdsignaturecolor, $this->signatureFont, $this->imageSignature);
+	}
+
+	/**
+	 * Sends the appropriate image and cache headers and outputs image to the browser
+	 */
+	protected static function outputImage($img, $imageType='png', $sendHeaders=false)
+	{
+		// Only send the content-type headers if no headers have been output this will ease debugging on misconfigured
+		// servers where warnings may have been output which break the output and prevent easily viewing source to see the error.
+		if (self::canSendHeaders())
+		{
+			if ($sendHeaders)
+			{
+				self::cacheHeaders();
+			}
+
+			switch ($imageType)
+			{
+				case 'jpeg':
+					if ($sendHeaders) header("Content-Type: image/jpeg");
+					imagejpeg($img, null, 90);
+					break;
+				case 'gif':
+					if ($sendHeaders) header("Content-Type: image/gif");
+					imagegif($img);
+					break;
+				default:
+					if ($sendHeaders) header("Content-Type: image/png");
+					imagepng($img);
+					break;
+			}
+		}
+		else
+		{
+			echo '<hr /><strong>'
+				.'Failed to generate captcha image, content has already been '
+				.'output.<br />This is most likely due to misconfiguration or '
+				.'a PHP error was sent to the browser.</strong>';
+		}
+
+		imagedestroy($img);
 	}
 }

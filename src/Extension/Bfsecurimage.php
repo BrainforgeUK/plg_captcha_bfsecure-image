@@ -10,12 +10,13 @@
 
 namespace Brainforgeuk\Plugin\Captcha\Bfsecurimage\Extension;
 
-use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageCodeHelper;
 use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Helper\BfsecurimageDisplayHelper;
+use Brainforgeuk\Plugin\Captcha\Bfsecurimage\Traits\BfsecurimageTrait;
 use Joomla\CMS\Environment\Browser;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\Database\DatabaseInterface;
 use Joomla\Event\SubscriberInterface;
 
 \defined('_JEXEC') or die;
@@ -24,10 +25,13 @@ use Joomla\Event\SubscriberInterface;
  */
 class Bfsecurimage extends CMSPlugin implements SubscriberInterface
 {
+	use BfsecurimageTrait;
+
 	protected $app;
 
+	protected $int;
+
 	protected $autoloadLanguage = true;
-	protected $responseField;
 
 	/*
 	 */
@@ -65,22 +69,15 @@ class Bfsecurimage extends CMSPlugin implements SubscriberInterface
 			return 'Captcha not accessible to robot.';
 		}
 
-		$this->responseField = $this->params->get('responsefield', 'bfsecurimage_response_field');
-		if (empty($this->responseField))
-		{
-			Log::add(Text::sprintf('JLIB_CAPTCHA_ERROR_PLUGIN_NOT_FOUND', $name), Log::WARNING, 'jerror');
-			return '';
-		}
-
 		$options = array();
 		$options['show_audio_button'] = $this->params->get('audio');
 		$options['show_refresh_button'] = $this->params->get('refresh');
-		$options['image_alt_text'] = Text::_('PLG_BFSECURIMAGE_THE_IMAGE');
-		$options['audio_title_text'] = Text::_('PLG_BFSECURIMAGE_AUDIO_CHALLENGE');
-		$options['refresh_alt_text'] = Text::_('PLG_BFSECURIMAGE_NEW_CHALLENGE');
+		$options['image_alt_text'] = Text::_('PLG_CAPTCHA_BFSECURIMAGE_THE_IMAGE');
+		$options['audio_title_text'] = Text::_('PLG_CAPTCHA_BFSECURIMAGE_AUDIO_CHALLENGE');
+		$options['refresh_alt_text'] = Text::_('PLG_CAPTCHA_BFSECURIMAGE_NEW_CHALLENGE');
 		$options['refresh_title_text'] = $options['refresh_alt_text'];
-		$options['input_text'] = Text::_('PLG_BFSECURIMAGE_VERIFY_CHALLENGE');
-		$options['input_id'] = Text::_('PLG_BFSECURIMAGE_RESPONSEFIELD_DEFAULT');
+		$options['input_text'] = Text::_('PLG_CAPTCHA_BFSECURIMAGE_VERIFY_CHALLENGE');
+		$options['input_id'] = Text::_('PLG_CAPTCHA_BFSECURIMAGE_RESPONSEFIELD_DEFAULT');
 
 		return BfsecurimageDisplayHelper::getCaptchaHtml($options, $this->params);
 	}
@@ -90,12 +87,30 @@ class Bfsecurimage extends CMSPlugin implements SubscriberInterface
 	 *
 	 * @return  True | false if the answer is correct, false otherwise
 	 */
-	public function onCheckAnswer($code)
+	public function onCheckAnswer($code=null)
 	{
-		$this->responseField = Text::_($this->params->get('responsefield'));
-		$solution = $this->app->getInput()->request->get($this->responseField, '', 'string');
-		if (empty($solution)) return false;
+		$input = $this->app->getInput();
 
-		return BfsecurimageCodeHelper::codeIsValid($solution);
+		$captchaResponse = $input->request->getRaw('bfsecurimage-captcha-response', '', 'string');
+		if (empty($captchaResponse)) {
+			throw new \RuntimeException(Text::_('PLG_CAPTCHA_BFSECURIMAGE_ERROR_EMPTY_SOLUTION'));
+		}
+
+		$captchaKey = $this->getCaptchaKey($input->request, 'bfsecurimage-captcha-key');
+
+		$remoteIp = $this->getRemoteIp();
+
+		$this->loadCode($captchaKey, $remoteIp, true);
+
+		if ($this->caseSensitive) return strcmp($captchaResponse, $this->codeDisplay) ? false : true;
+
+		return strcasecmp($captchaResponse, $this->codeDisplay) ? false : true;
+	}
+
+	/*
+	 */
+	protected function getDatabase()
+	{
+		return Factory::getContainer()->get(DatabaseInterface::class);
 	}
 }

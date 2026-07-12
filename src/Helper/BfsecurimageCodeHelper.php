@@ -94,6 +94,8 @@ abstract class BfsecurimageCodeHelper
 
 		$data = curl_exec($ch);
 
+		curl_close($ch);
+
 		if (empty($data)) return false;
 
 		return trim($data);

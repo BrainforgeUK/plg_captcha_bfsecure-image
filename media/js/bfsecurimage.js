@@ -27,11 +27,27 @@ function bfsecurimageAudioEnded(el) {
 }
 
 function bfsecurimageRefresh(el) {
+    let div = document.getElementById('captcha_image_audio_div');
+
+    div.innerHTML = '';
+
+    let source = atob(div.dataset.source);
+
+    let src = el.dataset.playsrc + '&' + Math.random();
+
+    source = source.replace('%s', src);
+
+    let audio = atob(div.dataset.audio);
+
+    audio = audio.replace('%s', source);
+
     let img = document.getElementById('captcha_bfsecurimage_image');
 
     img.src = '';
 
     img.src = el.dataset.imgsrc + '&' + Math.random();
+
+    div.innerHTML = audio;
 
     return false;
 }
